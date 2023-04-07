@@ -68,13 +68,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		2F2C74CA29CF3CCA006F7C19 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		2F2C74CF29CF3FBC006F7C19 /* Base */ = {
 			isa = PBXGroup;
 			children = (
@@ -103,7 +96,6 @@
 			isa = PBXGroup;
 			children = (
 				2F2C74CF29CF3FBC006F7C19 /* Base */,
-				2F2C74CA29CF3CCA006F7C19 /* Models */,
 				2F2C74C929CF3CBF006F7C19 /* Views */,
 				2F2C74C829CF3CB2006F7C19 /* Controllers */,
 				2F6477CA29CF2AD0005F15C8 /* AppDelegate.swift */,
