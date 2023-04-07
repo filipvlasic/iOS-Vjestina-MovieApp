@@ -1,12 +1,21 @@
 {
   "pins" : [
     {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher.git",
+      "state" : {
+        "revision" : "af4be924ad984cf4d16f4ae4df424e79a443d435",
+        "version" : "7.6.2"
+      }
+    },
+    {
       "identity" : "movieappdata",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/fiveagency/MovieAppData",
       "state" : {
-        "revision" : "9ed9d77e28dbf352cc84ae707d5e0dccc87297e6",
-        "version" : "2.0.1"
+        "revision" : "0d476dbdc4e8f6828a4fdaff4fa0b977ab5ebf35",
+        "version" : "2.1.1"
       }
     },
     {
