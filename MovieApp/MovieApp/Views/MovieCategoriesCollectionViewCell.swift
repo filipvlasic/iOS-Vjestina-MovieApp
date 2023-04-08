@@ -15,18 +15,24 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
   
   static let identifier = String(describing: MovieCategoriesCollectionViewCell.self)
   
-  private let imageView = UIImageView()
-  private let heart = UIButton()
+  private var imageView: UIImageView!
+  private var heart: UIButton!
   
   override init(frame: CGRect) {
     super.init(frame: frame)
     
+    setup()
     addViews()
     styleViews()
     setupConstraints()
   }
   
   required init?(coder: NSCoder) { fatalError() }
+  
+  private func setup() {
+    imageView = UIImageView()
+    heart = UIButton()
+  }
   
   private func addViews() {
     contentView.addSubview(imageView)

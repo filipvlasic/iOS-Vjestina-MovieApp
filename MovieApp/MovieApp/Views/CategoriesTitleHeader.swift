@@ -23,7 +23,7 @@ class CategoriesTitleHeader: UITableViewHeaderFooterView {
   required init?(coder: NSCoder) { fatalError() }
   
   func addViews() {
-    addSubview(title)
+    contentView.addSubview(title)
   }
   
   func styleViews() {
@@ -32,7 +32,7 @@ class CategoriesTitleHeader: UITableViewHeaderFooterView {
   }
   
   func setupConstraints() {
-    title.autoPinEdgesToSuperviewEdges(with: .init(top: 0, left: 16, bottom: 0, right: 16))
+    title.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16))
   }
   
 }

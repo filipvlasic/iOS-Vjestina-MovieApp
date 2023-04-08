@@ -22,7 +22,7 @@ class MovieListCollectionViewCell: UICollectionViewCell {
   
   override init(frame: CGRect) {
     super.init(frame: frame)
-    
+
     addViews()
     styleViews()
     setupConstraints()
@@ -38,14 +38,14 @@ class MovieListCollectionViewCell: UICollectionViewCell {
   
   private func styleViews() {
     backgroundColor = .systemBackground
-    clipsToBounds = false
+    layer.masksToBounds = false
     layer.cornerRadius = 10
     layer.shadowColor = UIColor.black.cgColor
     layer.shadowOpacity = 0.1
-    layer.shadowOffset = CGSize(width: 5, height: 5)
-    layer.shadowRadius = 2
-    
-    imageView.contentMode = .scaleAspectFill
+    layer.shadowOffset = CGSize(width: 4, height: 8)
+    layer.shadowPath = UIBezierPath(rect: bounds).cgPath
+        
+    imageView.contentMode = .scaleAspectFit
     imageView.layer.cornerRadius = 10
     imageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
     imageView.clipsToBounds = true
@@ -76,6 +76,7 @@ class MovieListCollectionViewCell: UICollectionViewCell {
   }
   
   override func prepareForReuse() {
+    super.prepareForReuse()
     imageView.image = nil
     name.text = ""
     summary.text = ""
@@ -84,10 +85,7 @@ class MovieListCollectionViewCell: UICollectionViewCell {
 
 extension MovieListCollectionViewCell {
   public func configure(url: URL?, name: String?, summary: String?) {
-    guard let url, let name, let summary else {
-      prepareForReuse()
-      return
-    }
+    guard let url, let name, let summary else { return }
     self.imageView.kf.setImage(with: url)
     self.name.text = name
     self.summary.text = summary

@@ -17,16 +17,29 @@ class MovieListViewController: UIViewController {
     static let rowSpacing: CGFloat = 12
   }
   
-  private let allMovies = MovieUseCase().allMovies
+  private var allMovies: [MovieModel]!
   
-  private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+  private var collectionView: UICollectionView!
   
   override func viewDidLoad() {
     super.viewDidLoad()
-        
+    
+    setupViews()
     addViews()
     styleViews()
     setupConstraints()
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    allMovies = MovieUseCase().allMovies
+  }
+  
+  private func setupViews() {
+    collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    collectionView.register(MovieListCollectionViewCell.self, forCellWithReuseIdentifier: MovieListCollectionViewCell.identifier)
+    collectionView.dataSource = self
+    collectionView.delegate = self
   }
   
   private func addViews() {
@@ -36,9 +49,6 @@ class MovieListViewController: UIViewController {
   private func styleViews() {
     view.backgroundColor = .systemBackground
     
-    collectionView.register(MovieListCollectionViewCell.self, forCellWithReuseIdentifier: MovieListCollectionViewCell.identifier)
-    collectionView.dataSource = self
-    collectionView.delegate = self
     collectionView.backgroundColor = .systemBackground
   }
   
@@ -59,10 +69,12 @@ extension MovieListViewController: UICollectionViewDataSource {
       return UICollectionViewCell()
     }
     
-    let url = URL(string: allMovies[indexPath.row].imageUrl)
-    let name = allMovies[indexPath.row].name
-    let summary = allMovies[indexPath.row].summary
+    let index = indexPath.row
+    let url = URL(string: allMovies[index].imageUrl)
+    let name = allMovies[index].name
+    let summary = allMovies[index].summary
     cell.configure(url: url, name: name, summary: summary)
+    
     return cell
   }
 }
@@ -81,8 +93,7 @@ extension MovieListViewController: UICollectionViewDelegateFlowLayout {
   }
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-    
-    return Constants.rowSpacing
+    Constants.rowSpacing
   }
   
 }

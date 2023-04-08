@@ -10,20 +10,21 @@ import MovieAppData
 
 class MovieCategoriesTableViewCell: UITableViewCell {
   
-  static let identifier = String(describing: MovieCategoriesTableViewCell.self)
-  private var moviesURL = [URL?]()
+  private enum Constants {
+    static let cellHeight: CGFloat = 179
+    static let cellWidth: CGFloat = 122
+    static let cellSpacing: CGFloat = 8
+  }
   
-  private var collectionView: UICollectionView = {
-    let flowLayout = UICollectionViewFlowLayout()
-    flowLayout.scrollDirection = .horizontal
-    let collectioView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-    collectioView.register(MovieCategoriesCollectionViewCell.self, forCellWithReuseIdentifier: MovieCategoriesCollectionViewCell.identifier)
-    return collectioView
-  }()
+  static let identifier = String(describing: MovieCategoriesTableViewCell.self)
+  private var moviesURL: [URL?]!
+  
+  private var collectionView: UICollectionView!
 
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
     
+    setup()
     addViews()
     styleViews()
     setupConstraints()
@@ -31,13 +32,23 @@ class MovieCategoriesTableViewCell: UITableViewCell {
   
   required init?(coder: NSCoder) { fatalError() }
   
+  private func setup() {
+    moviesURL = [URL?]()
+    
+    let flowLayout = UICollectionViewFlowLayout()
+    flowLayout.scrollDirection = .horizontal
+    collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+    collectionView.register(MovieCategoriesCollectionViewCell.self, forCellWithReuseIdentifier: MovieCategoriesCollectionViewCell.identifier)
+    collectionView.dataSource = self
+    collectionView.delegate = self
+  }
+  
   private func addViews() {
     contentView.addSubview(collectionView)
   }
   
   private func styleViews() {
-    collectionView.dataSource = self
-    collectionView.delegate = self
+    
   }
   
   private func setupConstraints() {
@@ -53,13 +64,14 @@ extension MovieCategoriesTableViewCell {
 
 extension MovieCategoriesTableViewCell: UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    return moviesURL.count
+    moviesURL.count
   }
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCategoriesCollectionViewCell.identifier, for: indexPath) as? MovieCategoriesCollectionViewCell else { return UICollectionViewCell() }
     
     cell.configure(with: moviesURL[indexPath.row])
+    
     return cell
   }
 }
@@ -72,11 +84,11 @@ extension MovieCategoriesTableViewCell: UICollectionViewDelegate {
 extension MovieCategoriesTableViewCell: UICollectionViewDelegateFlowLayout {
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    CGSize(width: 122, height: 179)
+    CGSize(width: Constants.cellWidth, height: Constants.cellHeight)
   }
   
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-    8
+    Constants.cellSpacing
   }
   
 }
