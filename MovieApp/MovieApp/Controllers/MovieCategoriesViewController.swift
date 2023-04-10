@@ -12,12 +12,13 @@ class MovieCategoriesViewController: UIViewController {
   
   private enum Constants {
     static let rowHeight: CGFloat = 179
+    static let sectionSpacing: CGFloat = 40
   }
   
   private var categories: [[MovieModel]]!
   private var categorieTitles: [String]!
   
-  private let tableView = UITableView()
+  private var tableView: UITableView!
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -41,10 +42,11 @@ class MovieCategoriesViewController: UIViewController {
   private func setup() {
     categorieTitles = ["What's popular", "Free to Watch", "Trending"]
     
+    tableView = UITableView()
     tableView.register(MovieCategoriesTableViewCell.self, forCellReuseIdentifier: MovieCategoriesTableViewCell.identifier)
-    tableView.register(CategoriesTitleHeader.self, forHeaderFooterViewReuseIdentifier: CategoriesTitleHeader.identifier)
     tableView.dataSource = self
     tableView.delegate = self
+    tableView.rowHeight = UITableView.automaticDimension
   }
   
   private func addViews() {
@@ -55,9 +57,6 @@ class MovieCategoriesViewController: UIViewController {
     view.backgroundColor = .systemBackground
     
     tableView.separatorStyle = .none
-//    tableView.sectionHeaderHeight = 50
-//    tableView.sectionHeaderTopPadding = 50
-    
   }
   
   private func setupConstraints() {
@@ -73,34 +72,28 @@ extension MovieCategoriesViewController: UITableViewDataSource {
   }
   
   func numberOfSections(in tableView: UITableView) -> Int {
-    return categories.count
+    categories.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCategoriesTableViewCell.identifier, for: indexPath) as? MovieCategoriesTableViewCell else { return UITableViewCell() }
     
     let categoryURL = categories[indexPath.section].map { URL(string: $0.imageUrl) }
-    cell.configure(with: categoryURL)
+    let title = categorieTitles[indexPath.section]
+    cell.configure(with: categoryURL, categoryTitle: title)
         
     return cell
   }
 }
 
 extension MovieCategoriesViewController: UITableViewDelegate {
-  func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-    guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: CategoriesTitleHeader.identifier) as? CategoriesTitleHeader else { return nil}
-    
-    header.update(title: categorieTitles[section])
-    
-    return header
+  
+  func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+    UIView()
   }
   
-  func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-    Constants.rowHeight
+  func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    section == (categorieTitles.count - 1) ? 0 : Constants.sectionSpacing
   }
-  
-//  func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//    section == 0 ? 28 : 28
-//  }
-  
+
 }
