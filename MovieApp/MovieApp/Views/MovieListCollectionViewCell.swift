@@ -37,28 +37,30 @@ class MovieListCollectionViewCell: UICollectionViewCell {
   }
   
   private func styleViews() {
-    backgroundColor = .systemBackground
-    layer.masksToBounds = false
-    layer.cornerRadius = 10
-    layer.shadowColor = UIColor.black.cgColor
-    layer.shadowOpacity = 0.1
-    layer.shadowOffset = CGSize(width: 4, height: 8)
-    layer.shadowPath = UIBezierPath(rect: bounds).cgPath
+    contentView.backgroundColor = .systemBackground
+    contentView.layer.masksToBounds = false
+    contentView.layer.cornerRadius = 10
+    contentView.layer.shadowColor = UIColor.black.cgColor
+    contentView.layer.shadowOpacity = 0.1
+    contentView.layer.shadowOffset = CGSize(width: 4, height: 8)
+    contentView.layer.shadowPath = UIBezierPath(rect: bounds).cgPath
         
     imageView.contentMode = .scaleAspectFit
     imageView.layer.cornerRadius = 10
     imageView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
-    imageView.clipsToBounds = true
+    imageView.layer.masksToBounds = true
     
     name.textColor = .label
     name.font = .systemFont(ofSize: 16, weight: .bold)
     name.numberOfLines = 0
-    name.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+//    name.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+//    name.setContentHuggingPriority(.defaultLow, for: .vertical)
     
     summary.textColor = Constants.summaryTextColor
     summary.font = .systemFont(ofSize: 14)
     summary.numberOfLines = 0
-    summary.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+//    summary.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
+//    summary.setContentHuggingPriority(.defaultLow, for: .vertical)
   }
   
   private func setupConstraints() {
@@ -67,7 +69,7 @@ class MovieListCollectionViewCell: UICollectionViewCell {
     
     name.autoPinEdge(.leading, to: .trailing, of: imageView, withOffset: 16)
     name.autoPinEdge(toSuperviewEdge: .top, withInset: 12)
-    name.autoPinEdge(toSuperviewEdge: .trailing, withInset: 12, relation: .greaterThanOrEqual)
+    name.autoPinEdge(toSuperviewEdge: .trailing, withInset: 12)
     
     summary.autoPinEdge(.top, to: .bottom, of: name, withOffset: 8)
     summary.autoPinEdge(.leading, to: .trailing, of: imageView, withOffset: 16)
@@ -84,7 +86,7 @@ class MovieListCollectionViewCell: UICollectionViewCell {
 }
 
 extension MovieListCollectionViewCell {
-  public func configure(url: URL?, name: String?, summary: String?) {
+  func configure(url: URL?, name: String?, summary: String?) {
     guard let url, let name, let summary else { return }
     self.imageView.kf.setImage(with: url)
     self.name.text = name

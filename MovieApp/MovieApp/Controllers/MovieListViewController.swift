@@ -17,7 +17,7 @@ class MovieListViewController: UIViewController {
     static let rowSpacing: CGFloat = 12
   }
   
-  private var allMovies: [MovieModel]!
+  private var allMovies: [MovieModel]! // init
   
   private var collectionView: UICollectionView!
   
@@ -33,6 +33,9 @@ class MovieListViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     allMovies = MovieUseCase().allMovies
+    DispatchQueue.main.async { [weak self] in
+      self?.collectionView.reloadData()
+    }
   }
   
   private func setupViews() {
@@ -61,7 +64,11 @@ class MovieListViewController: UIViewController {
 
 extension MovieListViewController: UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    allMovies.count
+    if let allMovies {
+      return allMovies.count
+    } else {
+      return 0
+    }
   }
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

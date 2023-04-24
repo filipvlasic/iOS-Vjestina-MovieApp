@@ -57,6 +57,10 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
     heart.autoSetDimensions(to: CGSize(width: 32, height: 32))
   }
   
+  override func prepareForReuse() {
+    imageView.image = nil
+  }
+  
 }
 
 extension MovieCategoriesCollectionViewCell {

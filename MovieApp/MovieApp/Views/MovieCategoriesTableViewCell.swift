@@ -35,8 +35,6 @@ class MovieCategoriesTableViewCell: UITableViewCell {
   required init?(coder: NSCoder) { fatalError() }
   
   private func setup() {
-    moviesURL = [URL?]()
-    
     titleLabel = UILabel()
     
     let flowLayout = UICollectionViewFlowLayout()
@@ -66,30 +64,48 @@ class MovieCategoriesTableViewCell: UITableViewCell {
     collectionView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0), excludingEdge: .top)
     collectionView.autoSetDimension(.height, toSize: Constants.cellHeight)
   }
+  
+  override func prepareForReuse() {
+    titleLabel.text = ""
+//    collectionView.reloadData()
+  }
 }
 
 extension MovieCategoriesTableViewCell {
   public func configure(with moviesURL: [URL?], categoryTitle: String) {
     self.moviesURL = moviesURL
     self.titleLabel.text = categoryTitle
+    self.collectionView.reloadData()
+    // reloaddata
   }
 }
 
 extension MovieCategoriesTableViewCell: UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    moviesURL.count
+    if let moviesURL {
+      return moviesURL.count
+    } else {
+      return 0
+    }
   }
+  
+  
   
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCategoriesCollectionViewCell.identifier, for: indexPath) as? MovieCategoriesCollectionViewCell else { return UICollectionViewCell() }
     
-    cell.configure(with: moviesURL[indexPath.row])
+    let movieURL = moviesURL[indexPath.row]
+    cell.configure(with: movieURL)
     
     return cell
   }
 }
 
 extension MovieCategoriesTableViewCell: UICollectionViewDelegate {
+  
+//  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+//    UIEdgeInsets(top: 0, left: 0, bottom: 200, right: 0)
+//  }
   
 }
 
