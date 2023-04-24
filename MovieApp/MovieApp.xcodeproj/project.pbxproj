@@ -19,6 +19,12 @@
 		2F6477D729CF2AD1005F15C8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2F6477D529CF2AD1005F15C8 /* LaunchScreen.storyboard */; };
 		2F6477E029CF3059005F15C8 /* PureLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 2F6477DF29CF3059005F15C8 /* PureLayout */; };
 		2F6477E329CF3086005F15C8 /* MovieAppData in Frameworks */ = {isa = PBXBuildFile; productRef = 2F6477E229CF3086005F15C8 /* MovieAppData */; };
+		2F9A497A29E0B41600A479D5 /* MovieCategoriesCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9A497629E0B41600A479D5 /* MovieCategoriesCollectionViewCell.swift */; };
+		2F9A497C29E0B41600A479D5 /* MovieCategoriesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9A497829E0B41600A479D5 /* MovieCategoriesTableViewCell.swift */; };
+		2F9A497D29E0B41600A479D5 /* MovieListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9A497929E0B41600A479D5 /* MovieListCollectionViewCell.swift */; };
+		2F9A498029E0B43600A479D5 /* MovieListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9A497E29E0B43600A479D5 /* MovieListViewController.swift */; };
+		2F9A498129E0B43600A479D5 /* MovieCategoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9A497F29E0B43600A479D5 /* MovieCategoriesViewController.swift */; };
+		2F9A498429E0B49300A479D5 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 2F9A498329E0B49300A479D5 /* Kingfisher */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +40,11 @@
 		2F6477D329CF2AD1005F15C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F6477D629CF2AD1005F15C8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2F6477D829CF2AD1005F15C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2F9A497629E0B41600A479D5 /* MovieCategoriesCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieCategoriesCollectionViewCell.swift; sourceTree = "<group>"; };
+		2F9A497829E0B41600A479D5 /* MovieCategoriesTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieCategoriesTableViewCell.swift; sourceTree = "<group>"; };
+		2F9A497929E0B41600A479D5 /* MovieListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieListCollectionViewCell.swift; sourceTree = "<group>"; };
+		2F9A497E29E0B43600A479D5 /* MovieListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieListViewController.swift; sourceTree = "<group>"; };
+		2F9A497F29E0B43600A479D5 /* MovieCategoriesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieCategoriesViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F9A498429E0B49300A479D5 /* Kingfisher in Frameworks */,
 				2F6477E029CF3059005F15C8 /* PureLayout in Frameworks */,
 				2F6477E329CF3086005F15C8 /* MovieAppData in Frameworks */,
 			);
@@ -52,6 +64,8 @@
 		2F2C74C829CF3CB2006F7C19 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				2F9A497F29E0B43600A479D5 /* MovieCategoriesViewController.swift */,
+				2F9A497E29E0B43600A479D5 /* MovieListViewController.swift */,
 				2F2C74CB29CF3CE5006F7C19 /* LogInViewController.swift */,
 				2F2C74D229CFA781006F7C19 /* MovieDetailsViewController.swift */,
 			);
@@ -61,6 +75,9 @@
 		2F2C74C929CF3CBF006F7C19 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2F9A497629E0B41600A479D5 /* MovieCategoriesCollectionViewCell.swift */,
+				2F9A497829E0B41600A479D5 /* MovieCategoriesTableViewCell.swift */,
+				2F9A497929E0B41600A479D5 /* MovieListCollectionViewCell.swift */,
 				2F2C74CD29CF3F74006F7C19 /* LoginItemView.swift */,
 				2F2C74D429CFAF6E006F7C19 /* MovieHeaderView.swift */,
 				2F2C74D829D0FE20006F7C19 /* ActorCollectionViewCell.swift */,
@@ -126,6 +143,7 @@
 			packageProductDependencies = (
 				2F6477DF29CF3059005F15C8 /* PureLayout */,
 				2F6477E229CF3086005F15C8 /* MovieAppData */,
+				2F9A498329E0B49300A479D5 /* Kingfisher */,
 			);
 			productName = MovieApp;
 			productReference = 2F6477C729CF2AD0005F15C8 /* MovieApp.app */;
@@ -158,6 +176,7 @@
 			packageReferences = (
 				2F6477DE29CF3059005F15C8 /* XCRemoteSwiftPackageReference "PureLayout" */,
 				2F6477E129CF3086005F15C8 /* XCRemoteSwiftPackageReference "MovieAppData" */,
+				2F9A498229E0B49300A479D5 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = 2F6477C829CF2AD0005F15C8 /* Products */;
 			projectDirPath = "";
@@ -186,11 +205,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F6477CB29CF2AD0005F15C8 /* AppDelegate.swift in Sources */,
+				2F9A497D29E0B41600A479D5 /* MovieListCollectionViewCell.swift in Sources */,
 				2F2C74D929D0FE20006F7C19 /* ActorCollectionViewCell.swift in Sources */,
+				2F9A498029E0B43600A479D5 /* MovieListViewController.swift in Sources */,
 				2F2C74CE29CF3F74006F7C19 /* LoginItemView.swift in Sources */,
+				2F9A497C29E0B41600A479D5 /* MovieCategoriesTableViewCell.swift in Sources */,
 				2F2C74D329CFA781006F7C19 /* MovieDetailsViewController.swift in Sources */,
+				2F9A497A29E0B41600A479D5 /* MovieCategoriesCollectionViewCell.swift in Sources */,
 				2F2C74D129CF3FC9006F7C19 /* BaseView.swift in Sources */,
 				2F6477CD29CF2AD0005F15C8 /* SceneDelegate.swift in Sources */,
+				2F9A498129E0B43600A479D5 /* MovieCategoriesViewController.swift in Sources */,
 				2F2C74D529CFAF6E006F7C19 /* MovieHeaderView.swift in Sources */,
 				2F2C74CC29CF3CE5006F7C19 /* LogInViewController.swift in Sources */,
 			);
@@ -418,6 +442,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		2F9A498229E0B49300A479D5 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -430,6 +462,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2F6477E129CF3086005F15C8 /* XCRemoteSwiftPackageReference "MovieAppData" */;
 			productName = MovieAppData;
+		};
+		2F9A498329E0B49300A479D5 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2F9A498229E0B49300A479D5 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
