@@ -20,8 +20,13 @@ class Router {
       title: "Movie List",
       image: .tabMovieListImage,
       selectedImage: .tabMovieListSelectedImage)
-    
+
     navigationController.setViewControllers([movieCategoriesVC], animated: true)
+    
+//    let movieListVC = MovieListViewController(router: self)
+//    movieListVC.title = "Movie List"
+//
+//    navigationController.setViewControllers([movieListVC], animated: true)
   }
   
   func showMovieDetails(with id: Int) {

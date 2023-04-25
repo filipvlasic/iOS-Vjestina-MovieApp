@@ -25,6 +25,32 @@ class MovieHeaderView: BaseView {
     static let leftPadding: CGFloat = 20
   }
   
+  func moveTextAway(number: CGFloat) {
+    rating.alpha = 0
+    userScore.alpha = 0
+    title.alpha = 0
+    releaseData.alpha = 0
+    categories.alpha = 0
+    rating.transform = rating.transform.translatedBy(x: -number, y: 0)
+    userScore.transform = userScore.transform.translatedBy(x: -number, y: 0)
+    title.transform = title.transform.translatedBy(x: -number, y: 0)
+    releaseData.transform = releaseData.transform.translatedBy(x: -number, y: 0)
+    categories.transform = categories.transform.translatedBy(x: -number, y: 0)
+  }
+  
+  func moveToOriginalPosition() {
+    rating.alpha = 1
+    userScore.alpha = 1
+    title.alpha = 1
+    releaseData.alpha = 1
+    categories.alpha = 1
+    rating.transform = .identity
+    userScore.transform = .identity
+    title.transform = .identity
+    releaseData.transform = .identity
+    categories.transform = .identity
+  }
+  
   private let headerImageView = UIImageView()
   private let rating = UILabel()
   private let userScore = UILabel()

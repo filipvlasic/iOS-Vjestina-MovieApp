@@ -44,6 +44,29 @@ class MovieDetailsViewController: UIViewController {
     setupConstraints()
   }
   
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    summary.alpha = 0
+    summary.transform = summary.transform.translatedBy(x: -view.frame.width, y: 0)
+    collectioView.alpha = 0
+    movieHeaderView.moveTextAway(number: view.frame.width)
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    
+    UIView.animate(withDuration: 0.2) { [weak self] in
+      self?.summary.alpha = 1
+      self?.summary.transform = .identity
+      self?.movieHeaderView.moveToOriginalPosition()
+    } completion: { success in
+      UIView.animate(withDuration: 0.3, delay: 0.5) { [weak self] in
+        self?.collectioView.alpha = 1
+      }
+    }
+
+  }
+  
   private func setupViews() {
     model = MovieUseCase().getDetails(id: self.id)
     collectioView.reloadData()

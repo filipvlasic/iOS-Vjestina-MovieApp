@@ -16,7 +16,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = (scene as? UIWindowScene) else { return }
     window = UIWindow(windowScene: windowScene)
     
-    let router = Router(navigationController: UINavigationController())
+    let navigationController = UINavigationController()
+    let router = Router(navigationController: navigationController)
     router.start()
     
     let favoritesVC = FavoritesViewController()
@@ -33,6 +34,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ]
     
     window?.rootViewController = tabBarController
+//    window?.rootViewController = navigationController
     window?.makeKeyAndVisible()
   }
 
