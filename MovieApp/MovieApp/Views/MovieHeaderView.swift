@@ -15,7 +15,7 @@ struct MovieHeaderViewModel {
   let releaseDate: String
   let categories: [MovieCategoryModel]
   let duration: Int
-  let imageName: String
+  let imageUrl: URL?
 }
 
 class MovieHeaderView: BaseView {
@@ -117,7 +117,7 @@ class MovieHeaderView: BaseView {
 
 extension MovieHeaderView {
   func update (with model: MovieHeaderViewModel) {
-    headerImageView.image = UIImage(named: model.imageName)
+    headerImageView.kf.setImage(with: model.imageUrl)
     rating.text = "\(model.rating)"
     title.text = "\(model.name) (\(model.year))"
     releaseData.text = "\(model.releaseDate) (US)"

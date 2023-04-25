@@ -17,8 +17,11 @@ class MovieCategoriesTableViewCell: UITableViewCell {
     static let titleColor = UIColor(red: 11/255, green: 37/255, blue: 63/255, alpha: 1)
   }
   
+  var didTap: ((Int) -> Void)?
+  
   static let identifier = String(describing: MovieCategoriesTableViewCell.self)
   private var moviesURL: [URL?]!
+  private var ids: [Int]!
   
   private var titleLabel: UILabel!
   private var collectionView: UICollectionView!
@@ -72,11 +75,11 @@ class MovieCategoriesTableViewCell: UITableViewCell {
 }
 
 extension MovieCategoriesTableViewCell {
-  public func configure(with moviesURL: [URL?], categoryTitle: String) {
+  public func configure(with moviesURL: [URL?], categoryTitle: String, ids: [Int]) {
     self.moviesURL = moviesURL
     self.titleLabel.text = categoryTitle
+    self.ids = ids
     self.collectionView.reloadData()
-    // reloaddata
   }
 }
 
@@ -102,11 +105,10 @@ extension MovieCategoriesTableViewCell: UICollectionViewDataSource {
 }
 
 extension MovieCategoriesTableViewCell: UICollectionViewDelegate {
-  
-//  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-//    UIEdgeInsets(top: 0, left: 0, bottom: 200, right: 0)
-//  }
-  
+  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    let id = ids[indexPath.row]
+    didTap?(id)
+  }
 }
 
 

@@ -15,11 +15,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     guard let windowScene = (scene as? UIWindowScene) else { return }
     window = UIWindow(windowScene: windowScene)
-    // let vc = LogInViewController()
-    // let vc = MovieDetailsViewController()
-//    let vc = MovieListViewController()
-    let vc = MovieCategoriesViewController()
-    window?.rootViewController = vc
+    
+    let router = Router(navigationController: UINavigationController())
+    router.start()
+    
+    let favoritesVC = FavoritesViewController()
+    favoritesVC.tabBarItem = UITabBarItem(
+      title: "Favorites",
+      image: .tabFavoritesImage,
+      selectedImage: .tabFavoritesSelectedImage)
+    
+    let tabBarController = UITabBarController()
+    tabBarController.tabBar.tintColor = .label
+    tabBarController.viewControllers = [
+      router.navigationController,
+      favoritesVC
+    ]
+    
+    window?.rootViewController = tabBarController
     window?.makeKeyAndVisible()
   }
 
