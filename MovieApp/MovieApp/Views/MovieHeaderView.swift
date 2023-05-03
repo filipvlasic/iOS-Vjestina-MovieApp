@@ -25,32 +25,6 @@ class MovieHeaderView: BaseView {
     static let leftPadding: CGFloat = 20
   }
   
-  func moveTextAway(number: CGFloat) {
-    rating.alpha = 0
-    userScore.alpha = 0
-    title.alpha = 0
-    releaseData.alpha = 0
-    categories.alpha = 0
-    rating.transform = rating.transform.translatedBy(x: -number, y: 0)
-    userScore.transform = userScore.transform.translatedBy(x: -number, y: 0)
-    title.transform = title.transform.translatedBy(x: -number, y: 0)
-    releaseData.transform = releaseData.transform.translatedBy(x: -number, y: 0)
-    categories.transform = categories.transform.translatedBy(x: -number, y: 0)
-  }
-  
-  func moveToOriginalPosition() {
-    rating.alpha = 1
-    userScore.alpha = 1
-    title.alpha = 1
-    releaseData.alpha = 1
-    categories.alpha = 1
-    rating.transform = .identity
-    userScore.transform = .identity
-    title.transform = .identity
-    releaseData.transform = .identity
-    categories.transform = .identity
-  }
-  
   private let headerImageView = UIImageView()
   private let rating = UILabel()
   private let userScore = UILabel()
@@ -58,21 +32,6 @@ class MovieHeaderView: BaseView {
   private let releaseData = UILabel()
   private let categories = UILabel()
   private let starsButton = UIButton()
-  
-  public func applyGradient() {
-    if rating.frame.origin.y > 0 { // 2 poziva???
-      let colorTop =  UIColor.clear.cgColor
-      let colorBottom = UIColor.black.cgColor
-      let gradientLayer = CAGradientLayer()
-      gradientLayer.colors = [colorTop, colorBottom]
-      gradientLayer.frame =
-        CGRect(x: 0,
-               y: rating.frame.origin.y,
-               width: bounds.width,
-               height: bounds.height - rating.frame.origin.y)
-      headerImageView.layer.addSublayer(gradientLayer)
-    }
-  }
   
   override func addViews() {
     addSubview(headerImageView)
@@ -137,6 +96,55 @@ class MovieHeaderView: BaseView {
     starsButton.autoPinEdge(toSuperviewSafeArea: .leading, withInset: Constants.leftPadding)
     starsButton.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 20)
     starsButton.autoSetDimensions(to: CGSize(width: 32, height: 32))
+  }
+  
+  func moveTextAway(position: CGFloat) {
+    makeTransparent(views: [rating, userScore, title, releaseData, categories])
+    translateAway(position: position, views: [rating, userScore, title, releaseData, categories])
+  }
+  
+  func moveTextToOriginalPosition() {
+    makeVisible([rating, userScore, title, releaseData, categories])
+    translateToOriginalPosition(views: [rating, userScore, title, releaseData, categories])
+  }
+  
+  private func makeTransparent(views: [UIView]) {
+    views.forEach { currentView in
+      currentView.alpha = 0
+    }
+  }
+  
+  private func makeVisible(_ views: [UIView]) {
+    views.forEach { currentView in
+      currentView.alpha = 1
+    }
+  }
+  
+  private func translateAway(position: CGFloat, views: [UIView]) {
+    views.forEach { view in
+      view.transform = view.transform.translatedBy(x: -position, y: 0)
+    }
+  }
+  
+  private func translateToOriginalPosition(views: [UIView]) {
+    views.forEach { view in
+      view.transform = .identity
+    }
+  }
+  
+  public func applyGradient() {
+    if rating.frame.origin.y > 0 { // 2 poziva???
+      let colorTop =  UIColor.clear.cgColor
+      let colorBottom = UIColor.black.cgColor
+      let gradientLayer = CAGradientLayer()
+      gradientLayer.colors = [colorTop, colorBottom]
+      gradientLayer.frame =
+        CGRect(x: 0,
+               y: rating.frame.origin.y,
+               width: bounds.width,
+               height: bounds.height - rating.frame.origin.y)
+      headerImageView.layer.addSublayer(gradientLayer)
+    }
   }
   
 }

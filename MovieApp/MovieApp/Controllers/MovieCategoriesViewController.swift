@@ -15,7 +15,7 @@ class MovieCategoriesViewController: UIViewController {
     static let sectionSpacing: CGFloat = 40
   }
   
-  private let router: Router!
+  private let router: Router
   
   private var categories: [[MovieModel]]!
   private var categorieTitles: [String]!

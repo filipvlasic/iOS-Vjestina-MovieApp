@@ -18,24 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     let navigationController = UINavigationController()
     let router = Router(navigationController: navigationController)
-    router.start()
-    
-    let favoritesVC = FavoritesViewController()
-    favoritesVC.tabBarItem = UITabBarItem(
-      title: "Favorites",
-      image: .tabFavoritesImage,
-      selectedImage: .tabFavoritesSelectedImage)
-    
-    let tabBarController = UITabBarController()
-    tabBarController.tabBar.tintColor = .label
-    tabBarController.viewControllers = [
-      router.navigationController,
-      favoritesVC
-    ]
-    
-    window?.rootViewController = tabBarController
-//    window?.rootViewController = navigationController
-    window?.makeKeyAndVisible()
+    router.start(in: window)
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {
