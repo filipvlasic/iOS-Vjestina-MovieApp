@@ -130,10 +130,11 @@ class MovieDetailsViewController: UIViewController {
   
   private func moveTextToOriginalPosition() {
     UIView.animate(withDuration: 0.2) { [weak self] in
-      self?.summary.alpha = 1
-      self?.summary.transform = .identity
-      self?.movieHeaderView.moveTextToOriginalPosition()
-    } completion: { success in
+      guard let self else { return }
+      self.summary.alpha = 1
+      self.summary.transform = .identity
+      self.movieHeaderView.moveTextToOriginalPosition()
+    } completion: { _ in
       UIView.animate(withDuration: 0.3, delay: 0.5) { [weak self] in
         self?.collectioView.alpha = 1
       }

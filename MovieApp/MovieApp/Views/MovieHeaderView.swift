@@ -109,27 +109,19 @@ class MovieHeaderView: BaseView {
   }
   
   private func makeTransparent(views: [UIView]) {
-    views.forEach { currentView in
-      currentView.alpha = 0
-    }
+    views.forEach { $0.alpha = 0 }
   }
   
   private func makeVisible(_ views: [UIView]) {
-    views.forEach { currentView in
-      currentView.alpha = 1
-    }
+    views.forEach { $0.alpha = 1 }
   }
   
   private func translateAway(position: CGFloat, views: [UIView]) {
-    views.forEach { view in
-      view.transform = view.transform.translatedBy(x: -position, y: 0)
-    }
+    views.forEach { $0.transform = $0.transform.translatedBy(x: -position, y: 0) }
   }
   
   private func translateToOriginalPosition(views: [UIView]) {
-    views.forEach { view in
-      view.transform = .identity
-    }
+    views.forEach { $0.transform = .identity }
   }
   
   public func applyGradient() {
