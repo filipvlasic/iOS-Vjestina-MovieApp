@@ -15,23 +15,32 @@ class MovieCategoriesViewController: UIViewController {
     static let sectionSpacing: CGFloat = 40
   }
   
+  private let router: Router
+  
   private var categories: [[MovieModel]]!
   private var categorieTitles: [String]!
   
   private var tableView: UITableView!
   
+  init(router: Router) {
+    self.router = router
+    super.init(nibName: nil, bundle: nil)
+
+  }
+  
+  required init?(coder: NSCoder) { fatalError() }
+  
   override func viewDidLoad() {
     super.viewDidLoad()
-    
+
+    fetchData()
     setup()
     addViews()
     styleViews()
     setupConstraints()
   }
   
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    
+  private func fetchData() {
     let model = MovieUseCase()
     categories = [[MovieModel]]()
     categories.append(model.popularMovies)
@@ -41,38 +50,18 @@ class MovieCategoriesViewController: UIViewController {
     DispatchQueue.main.async { [weak self] in
       self?.tableView.reloadData()
     }
-
-//    DispatchQueue.main.async { [weak self] in
-//      print("Prvo")
-//      self?.tableView.reloadData()
-//    }
-    
-//    DispatchQueue.global().async { [weak self] in
-//      let model = MovieUseCase()
-//      self?.categories = [[MovieModel]]()
-//      self?.categories.append(model.popularMovies)
-//      self?.categories.append(model.freeToWatchMovies)
-//      self?.categories.append(model.trendingMovies)
-//
-//      DispatchQueue.main.async { [weak self] in
-//        self?.tableView.reloadData()
-//      }
-//      DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-//        self?.tableView.reloadData()
-//      }
-//    }
-    
-    
   }
   
   private func setup() {
+    title = tabBarItem.title
+
+    
     categorieTitles = ["What's popular", "Free to Watch", "Trending"]
     
     tableView = UITableView()
     tableView.register(MovieCategoriesTableViewCell.self, forCellReuseIdentifier: MovieCategoriesTableViewCell.identifier)
     tableView.dataSource = self
     tableView.delegate = self
-//    tableView.rowHeight = UITableView.automaticDimension
   }
   
   private func addViews() {
@@ -109,8 +98,12 @@ extension MovieCategoriesViewController: UITableViewDataSource {
     guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCategoriesTableViewCell.identifier, for: indexPath) as? MovieCategoriesTableViewCell else { return UITableViewCell() }
     
     let categoryURL = categories[indexPath.section].map { URL(string: $0.imageUrl) } // compactMap
+    let ids = categories[indexPath.section].map { $0.id }
     let title = categorieTitles[indexPath.section]
-    cell.configure(with: categoryURL, categoryTitle: title)
+    cell.configure(with: categoryURL, categoryTitle: title, ids: ids)
+    cell.didTap = { [weak self] (id: Int) in
+      self?.router.showMovieDetails(with: id)
+    }
       
     return cell
   }

@@ -15,7 +15,7 @@ struct ActorModel {
 class ActorCollectionViewCell: UICollectionViewCell {
   
   private enum Constants {
-    static let textColor: UIColor = .systemBackground
+    static let textColor: UIColor = .label
   }
   
   public static let identifier = "ActorCell"

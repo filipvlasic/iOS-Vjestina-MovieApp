@@ -15,7 +15,7 @@ struct MovieHeaderViewModel {
   let releaseDate: String
   let categories: [MovieCategoryModel]
   let duration: Int
-  let imageName: String
+  let imageUrl: URL?
 }
 
 class MovieHeaderView: BaseView {
@@ -32,21 +32,6 @@ class MovieHeaderView: BaseView {
   private let releaseData = UILabel()
   private let categories = UILabel()
   private let starsButton = UIButton()
-  
-  public func applyGradient() {
-    if rating.frame.origin.y > 0 { // 2 poziva???
-      let colorTop =  UIColor.clear.cgColor
-      let colorBottom = UIColor.black.cgColor
-      let gradientLayer = CAGradientLayer()
-      gradientLayer.colors = [colorTop, colorBottom]
-      gradientLayer.frame =
-        CGRect(x: 0,
-               y: rating.frame.origin.y,
-               width: bounds.width,
-               height: bounds.height - rating.frame.origin.y)
-      headerImageView.layer.addSublayer(gradientLayer)
-    }
-  }
   
   override func addViews() {
     addSubview(headerImageView)
@@ -113,11 +98,52 @@ class MovieHeaderView: BaseView {
     starsButton.autoSetDimensions(to: CGSize(width: 32, height: 32))
   }
   
+  func moveTextAway(position: CGFloat) {
+    makeTransparent(views: [rating, userScore, title, releaseData, categories])
+    translateAway(position: position, views: [rating, userScore, title, releaseData, categories])
+  }
+  
+  func moveTextToOriginalPosition() {
+    makeVisible([rating, userScore, title, releaseData, categories])
+    translateToOriginalPosition(views: [rating, userScore, title, releaseData, categories])
+  }
+  
+  private func makeTransparent(views: [UIView]) {
+    views.forEach { $0.alpha = 0 }
+  }
+  
+  private func makeVisible(_ views: [UIView]) {
+    views.forEach { $0.alpha = 1 }
+  }
+  
+  private func translateAway(position: CGFloat, views: [UIView]) {
+    views.forEach { $0.transform = $0.transform.translatedBy(x: -position, y: 0) }
+  }
+  
+  private func translateToOriginalPosition(views: [UIView]) {
+    views.forEach { $0.transform = .identity }
+  }
+  
+  public func applyGradient() {
+    if rating.frame.origin.y > 0 { // 2 poziva???
+      let colorTop =  UIColor.clear.cgColor
+      let colorBottom = UIColor.black.cgColor
+      let gradientLayer = CAGradientLayer()
+      gradientLayer.colors = [colorTop, colorBottom]
+      gradientLayer.frame =
+        CGRect(x: 0,
+               y: rating.frame.origin.y,
+               width: bounds.width,
+               height: bounds.height - rating.frame.origin.y)
+      headerImageView.layer.addSublayer(gradientLayer)
+    }
+  }
+  
 }
 
 extension MovieHeaderView {
   func update (with model: MovieHeaderViewModel) {
-    headerImageView.image = UIImage(named: model.imageName)
+    headerImageView.kf.setImage(with: model.imageUrl)
     rating.text = "\(model.rating)"
     title.text = "\(model.name) (\(model.year))"
     releaseData.text = "\(model.releaseDate) (US)"

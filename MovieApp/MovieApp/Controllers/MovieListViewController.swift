@@ -17,6 +17,7 @@ class MovieListViewController: UIViewController {
     static let rowSpacing: CGFloat = 12
   }
   
+  private let router: Router
   private var allMovies: [MovieModel]! // init
   
   private var collectionView: UICollectionView!
@@ -29,6 +30,13 @@ class MovieListViewController: UIViewController {
     styleViews()
     setupConstraints()
   }
+  
+  init(router: Router) {
+    self.router = router
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) { fatalError() }
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
@@ -87,7 +95,10 @@ extension MovieListViewController: UICollectionViewDataSource {
 }
 
 extension MovieListViewController: UICollectionViewDelegate {
-  
+  func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    let id = allMovies[indexPath.row].id
+    router.showMovieDetails(with: id)
+  }
 }
 
 extension MovieListViewController: UICollectionViewDelegateFlowLayout {

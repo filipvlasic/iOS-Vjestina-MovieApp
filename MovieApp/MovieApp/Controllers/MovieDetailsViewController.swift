@@ -14,12 +14,13 @@ class MovieDetailsViewController: UIViewController {
     static let cellSpacing: CGFloat = 8
     static let cellHeight: CGFloat = 60
     static let numberOfItemsPerRow: CGFloat = 3
-    static let textColor: UIColor = .systemBackground
-    static let bacgroundColor: UIColor = .label
+    static let textColor: UIColor = .label
+    static let bacgroundColor: UIColor = .systemBackground
     static let leftPadding: CGFloat = 20
     static let rightPadding: CGFloat = 20
   }
   
+  private let id: Int
   private var model: MovieDetailsModel?
   
   private let movieHeaderView = MovieHeaderView()
@@ -27,6 +28,12 @@ class MovieDetailsViewController: UIViewController {
   private let summary = UILabel()
   private let collectioView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
   
+  init(id: Int) {
+    self.id = id
+    super.init(nibName: nil, bundle: nil)
+  }
+  
+  required init?(coder: NSCoder) { fatalError() }
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -39,12 +46,18 @@ class MovieDetailsViewController: UIViewController {
   
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    model = MovieUseCase().getDetails(id: 111161)
-    styleViews()
-    collectioView.reloadData()
+    moveTextAway()
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    moveTextToOriginalPosition()
   }
   
   private func setupViews() {
+    model = MovieUseCase().getDetails(id: self.id)
+    collectioView.reloadData()
+    
     collectioView.register(ActorCollectionViewCell.self, forCellWithReuseIdentifier: ActorCollectionViewCell.identifier)
     collectioView.dataSource = self
     collectioView.delegate = self
@@ -74,7 +87,7 @@ class MovieDetailsViewController: UIViewController {
       releaseDate: model.releaseDate,
       categories: model.categories,
       duration: model.duration,
-      imageName: "shawshank.jpg")
+      imageUrl: URL(string: model.imageUrl))
     movieHeaderView.update(with: movieHeaderViewModel)
     
     overview.textColor = Constants.textColor
@@ -91,8 +104,7 @@ class MovieDetailsViewController: UIViewController {
   }
   
   private func setupConstraints() {
-    movieHeaderView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .bottom)
-    // movieHeaderView.autoSetDimension(.height, toSize: 327)
+    movieHeaderView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
     movieHeaderView.autoMatch(.height, to: .height, of: view, withMultiplier: 0.4)
     
     overview.autoPinEdge(.top, to: .bottom, of: movieHeaderView, withOffset: 22)
@@ -107,6 +119,26 @@ class MovieDetailsViewController: UIViewController {
     collectioView.autoPinEdge(toSuperviewEdge: .leading, withInset: Constants.leftPadding)
     collectioView.autoPinEdge(toSuperviewEdge: .trailing, withInset: Constants.rightPadding)
     collectioView.autoPinEdge(toSuperviewEdge: .bottom)
+  }
+  
+  private func moveTextAway() {
+    summary.alpha = 0
+    collectioView.alpha = 0
+    summary.transform = summary.transform.translatedBy(x: -view.frame.width, y: 0)
+    movieHeaderView.moveTextAway(position: view.frame.width)
+  }
+  
+  private func moveTextToOriginalPosition() {
+    UIView.animate(withDuration: 0.2) { [weak self] in
+      guard let self else { return }
+      self.summary.alpha = 1
+      self.summary.transform = .identity
+      self.movieHeaderView.moveTextToOriginalPosition()
+    } completion: { _ in
+      UIView.animate(withDuration: 0.3, delay: 0.5) { [weak self] in
+        self?.collectioView.alpha = 1
+      }
+    }
   }
   
 }
