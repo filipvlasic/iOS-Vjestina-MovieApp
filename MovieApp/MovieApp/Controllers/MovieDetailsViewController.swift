@@ -113,6 +113,7 @@ class MovieDetailsViewController: UIViewController {
   private func bindData() {
     viewModel
       .$details
+      .receive(on: DispatchQueue.main)
       .sink { details in
         self.model = details
         self.updateData()
@@ -130,7 +131,7 @@ class MovieDetailsViewController: UIViewController {
       releaseDate: model.releaseDate,
       categories: model.categories,
       duration: model.duration,
-      imageUrl: URL(string: model.imageURL))
+      imageUrl: URL(string: model.imageUrl))
     movieHeaderView.update(with: movieHeaderViewModel)
     summary.text = model.summary
     moveTextToOriginalPosition()

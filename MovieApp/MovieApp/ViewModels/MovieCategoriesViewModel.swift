@@ -20,32 +20,26 @@ class MovieCategoriesViewModel {
   }
   
   func fetchFreeToWatchMovies() {
-    apiClient.getFreeToWatchMovies { [weak self] amMovie, error in
-      if let error { print(error) }
-      
-      guard let amMovie else { return }
-      self?.freeToWatchMoviesPublished = amMovie.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageURL, category: "Free To Watch") })
-      
+    Task.init {
+      let res = await apiClient.getFreeToWatchMovies()
+      guard let res else { return }
+      freeToWatchMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageUrl, category: "Free To Watch") })
     }
   }
   
   func fetchTrendingMovies() {
-    apiClient.getTrendingMovies { [weak self] amMovie, error in
-      if let error { print(error) }
-      
-      guard let amMovie else { return }
-      self?.trendingMoviesPublished = amMovie.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageURL, category: "Trending") })
-      
+    Task.init {
+      let res = await apiClient.getTrendingMovies()
+      guard let res else { return }
+      trendingMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageUrl, category: "Trending") })
     }
   }
   
   func fetchPopularMovies() {
-    apiClient.getPopularMovies { [weak self] amMovie, error in
-      if let error { print(error) }
-      
-      guard let amMovie else { return }
-      self?.popularMoviesPublished = amMovie.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageURL, category: "What's popular") })
-      
+    Task.init {
+      let res = await apiClient.getPopularMovies()
+      guard let res else { return }
+      trendingMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageUrl, category: "What's popular") })
     }
   }
   

@@ -15,60 +15,113 @@ enum MovieTag: String, Decodable {
     case inTheaters = "IN_THEATERS"
     case movie = "MOVIE"
     case tvShow = "TV_SHOW"
-    case trendingToday = "TRENDING_TODAY"
-    case trendingThisWeek = "TRENDING_THIS_WEEK"
+    case trendingToday = "TODAY"
+    case trendingThisWeek = "THIS_WEEK"
 }
 
 struct NativeAPIClient: APIClient {
   
-  func getFreeToWatchMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
-    let movies = MovieUseCase().freeToWatchMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-      completion(movies, nil)
-    }
+  private enum Constants {
+    static let baseURL = "https://five-ios-api.herokuapp.com"
+    static let key = "Zpu7bOQYLNiCkT32V3c9BPoxDMfxisPAfevLW6ps"
   }
   
-  func getPopularMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
-    let movies = MovieUseCase().popularMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-      completion(movies, nil)
-    }
+  let session = URLSession.shared
+  let decoder = JSONDecoder()
+  
+  func getFreeToWatchMovies() async -> [AMMovie]? {
+    var movies = [AMMovie]()
+    async let a = makeMovieCall(path: "free-to-watch", category: MovieTag.movie.rawValue)
+    async let b = makeMovieCall(path: "free-to-watch", category: MovieTag.tvShow.rawValue)
+    
+    let c = await [a, b]
+    c.forEach { movies.append(contentsOf: $0) }
+    return movies
   }
   
-  func getTrendingMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
-    let movies = MovieUseCase().trendingMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-      completion(movies, nil)
-    }
+  func getPopularMovies() async -> [AMMovie]? {
+    var movies = [AMMovie]()
+    async let a = makeMovieCall(path: "popular", category: MovieTag.forRent.rawValue)
+    async let b = makeMovieCall(path: "popular", category: MovieTag.inTheaters.rawValue)
+    async let c = makeMovieCall(path: "popular", category: MovieTag.onTv.rawValue)
+    async let d = makeMovieCall(path: "popular", category: MovieTag.streaming.rawValue)
+
+    let f = await [a, b, c, d]
+    f.forEach { movies.append(contentsOf: $0) }
+    return movies
   }
   
-  func getAllMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
-    let movies = MovieUseCase().allMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-      completion(movies, nil)
-    }
+  func getTrendingMovies() async -> [AMMovie]? {
+    var movies = [AMMovie]()
+    async let a = makeMovieCall(path: "trending", category: MovieTag.trendingThisWeek.rawValue)
+    async let b = makeMovieCall(path: "trending", category: MovieTag.trendingToday.rawValue)
+
+    let c = await [a, b]
+    c.forEach { movies.append(contentsOf: $0) }
+    return movies
   }
   
-  func getMovieDetails(with id: Int, completion: @escaping (AMMovieDetails?, Error?) -> Void) {
-    let movieDetails = MovieUseCase().getDetails(id: id).map { AMMovieDetails(
-      categories: ["Test", "Test"],
-      crewMembers: [
-        AMCrewMember(name: "Filip", role: "Test"),
-        AMCrewMember(name: "Filip", role: "Test"),
-        AMCrewMember(name: "Filip", role: "Test"),
-        AMCrewMember(name: "Filip", role: "Test"),
-      ],
-      id: $0.id,
-      duration: $0.duration,
-      year: $0.year,
-      rating: $0.rating,
-      imageURL: $0.imageUrl,
-      name: $0.name,
-      releaseDate: $0.releaseDate,
-      summary: $0.summary) }
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-      completion(movieDetails, nil)
+  func getAllMovies() async -> [AMMovie]? {
+    var movies = [AMMovie]()
+    async let a = getTrendingMovies()
+    async let b = getPopularMovies()
+    async let c = getFreeToWatchMovies()
+
+    let d = await [a, b, c]
+    d.forEach { movies.append(contentsOf: $0!) }
+    return movies
+  }
+  
+  func getMovieDetails(with id: Int) async -> AMMovieDetails? {
+    async let a = makeMovieDetailsCall(id: id)
+    
+    let c = await a
+    return c
+  }
+  
+  private func makeMovieCall(path: String, category: String) async -> [AMMovie] {
+    var movies = [AMMovie]()
+    guard let url = URL(string: "\(Constants.baseURL)/api/v1/movie/\(path)?criteria=\(category)") else { return []}
+    var urlRequest = URLRequest(url: url)
+    urlRequest.setValue("Bearer \(Constants.key)", forHTTPHeaderField: "Authorization")
+    
+    var data: Data?
+    do {
+      (data, _) = try await session.data(for: urlRequest)
+    } catch (let error) {
+      print(error)
     }
+    do {
+      guard let data else { return [] }
+      let res = try decoder.decode([AMMovie].self, from: data)
+      movies.append(contentsOf: res)
+    } catch (let error) {
+      print(error)
+    }
+    
+    return movies
+  }
+  
+  private func makeMovieDetailsCall(id: Int) async -> AMMovieDetails? {
+    guard let url = URL(string: "\(Constants.baseURL)/api/v1/movie/\(id)/details") else { return nil}
+    var urlRequest = URLRequest(url: url)
+    urlRequest.setValue("Bearer \(Constants.key)", forHTTPHeaderField: "Authorization")
+    
+    var data: Data?
+    do {
+      (data, _) = try await session.data(for: urlRequest)
+    } catch (let error) {
+      print(error)
+    }
+    do {
+      guard let data else { return nil }
+      let res = try decoder.decode(AMMovieDetails.self, from: data)
+      return res
+    } catch (let error) {
+      print(error)
+    }
+    
+    return nil
   }
   
 }

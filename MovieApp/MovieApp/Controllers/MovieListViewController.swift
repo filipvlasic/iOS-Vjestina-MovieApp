@@ -74,6 +74,7 @@ class MovieListViewController: UIViewController {
   private func bindData() {
     viewModel
       .$allMovies
+      .receive(on: DispatchQueue.main)
       .sink { movies in
         if movies.isEmpty { return }
         self.allMovies = movies

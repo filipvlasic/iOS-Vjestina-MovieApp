@@ -9,6 +9,6 @@ import Foundation
 
 struct AMMovie: Decodable {
   let id: Int
-  let imageURL, name, summary: String
+  let imageUrl, name, summary: String
   let year: Int
 }

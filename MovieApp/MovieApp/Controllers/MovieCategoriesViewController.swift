@@ -79,6 +79,7 @@ class MovieCategoriesViewController: UIViewController {
     
     viewModel
       .$freeToWatchMoviesPublished
+      .receive(on: DispatchQueue.main)
       .sink { movies in
         if movies.isEmpty { return }
         self.categories.append(movies)
@@ -88,6 +89,7 @@ class MovieCategoriesViewController: UIViewController {
     
     viewModel
       .$popularMoviesPublished
+      .receive(on: DispatchQueue.main)
       .sink { movies in
         if movies.isEmpty { return }
         self.categories.append(movies)
@@ -97,6 +99,7 @@ class MovieCategoriesViewController: UIViewController {
     
     viewModel
       .$trendingMoviesPublished
+      .receive(on: DispatchQueue.main)
       .sink { movies in
         if movies.isEmpty { return }
         self.categories.append(movies)

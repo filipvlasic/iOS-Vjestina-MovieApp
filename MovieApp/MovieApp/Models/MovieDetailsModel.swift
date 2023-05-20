@@ -12,7 +12,7 @@ struct MovieDetailsModel {
   let crewMembers: [CrewMember]
   let id, duration, year: Int
   let rating: Double
-  let imageURL, name, releaseDate, summary: String
+  let imageUrl, name, releaseDate, summary: String
 }
 
 struct CrewMember: Decodable {

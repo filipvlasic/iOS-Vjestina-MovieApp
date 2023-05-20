@@ -12,7 +12,7 @@ struct AMMovieDetails: Decodable {
   let crewMembers: [AMCrewMember]
   let id, duration, year: Int
   let rating: Double
-  let imageURL, name, releaseDate, summary: String
+  let imageUrl, name, releaseDate, summary: String
 }
 
 struct AMCrewMember: Decodable {

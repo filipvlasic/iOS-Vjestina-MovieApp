@@ -17,11 +17,10 @@ class MovieListViewModel {
   }
   
   func fetchMovies() {
-    apiClient.getAllMovies { [weak self] amMovie, error in
-      if let error { print(error) }
-      
-      guard let amMovie else { return }
-      self?.allMovies = amMovie.map({ MovieListModel(id: $0.id, imageURL: $0.imageURL, name: $0.name, summary: $0.summary) })
+    Task.init {
+      let res = await apiClient.getAllMovies()
+      guard let res else { return }
+      allMovies = res.map({ MovieListModel(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary) })
     }
   }
 }

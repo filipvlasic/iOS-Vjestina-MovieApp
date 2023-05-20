@@ -8,31 +8,35 @@
 import UIKit
 import MovieAppData
 
-struct MockAPIClient: APIClient {
+struct MockAPIClient {
+  func getFreeToWatchMovies() async -> [AMMovie]? {
+    return nil
+  }
+  
   
   func getFreeToWatchMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
-    let movies = MovieUseCase().freeToWatchMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
+    let movies = MovieUseCase().freeToWatchMovies.map { AMMovie(id: $0.id, imageUrl: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
       completion(movies, nil)
     }
   }
   
   func getPopularMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
-    let movies = MovieUseCase().popularMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
+    let movies = MovieUseCase().popularMovies.map { AMMovie(id: $0.id, imageUrl: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
       completion(movies, nil)
     }
   }
   
   func getTrendingMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
-    let movies = MovieUseCase().trendingMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
+    let movies = MovieUseCase().trendingMovies.map { AMMovie(id: $0.id, imageUrl: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
       completion(movies, nil)
     }
   }
   
   func getAllMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
-    let movies = MovieUseCase().allMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
+    let movies = MovieUseCase().allMovies.map { AMMovie(id: $0.id, imageUrl: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
       completion(movies, nil)
     }
@@ -51,7 +55,7 @@ struct MockAPIClient: APIClient {
       duration: $0.duration,
       year: $0.year,
       rating: $0.rating,
-      imageURL: $0.imageUrl,
+      imageUrl: $0.imageUrl,
       name: $0.name,
       releaseDate: $0.releaseDate,
       summary: $0.summary) }
