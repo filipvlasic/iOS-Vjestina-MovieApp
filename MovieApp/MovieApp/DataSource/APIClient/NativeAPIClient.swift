@@ -1,0 +1,74 @@
+//
+//  NativeAPIClient.swift
+//  MovieApp
+//
+//  Created by Filip Vlašić on 19.05.2023..
+//
+
+import UIKit
+import MovieAppData
+
+enum MovieTag: String, Decodable {
+    case streaming = "STREAMING"
+    case onTv = "ON_TV"
+    case forRent = "FOR_RENT"
+    case inTheaters = "IN_THEATERS"
+    case movie = "MOVIE"
+    case tvShow = "TV_SHOW"
+    case trendingToday = "TRENDING_TODAY"
+    case trendingThisWeek = "TRENDING_THIS_WEEK"
+}
+
+struct NativeAPIClient: APIClient {
+  
+  func getFreeToWatchMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
+    let movies = MovieUseCase().freeToWatchMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+      completion(movies, nil)
+    }
+  }
+  
+  func getPopularMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
+    let movies = MovieUseCase().popularMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+      completion(movies, nil)
+    }
+  }
+  
+  func getTrendingMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
+    let movies = MovieUseCase().trendingMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+      completion(movies, nil)
+    }
+  }
+  
+  func getAllMovies(completion: @escaping ([AMMovie]?, Error?) -> Void) {
+    let movies = MovieUseCase().allMovies.map { AMMovie(id: $0.id, imageURL: $0.imageUrl, name: $0.name, summary: $0.summary, year: 2000) }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+      completion(movies, nil)
+    }
+  }
+  
+  func getMovieDetails(with id: Int, completion: @escaping (AMMovieDetails?, Error?) -> Void) {
+    let movieDetails = MovieUseCase().getDetails(id: id).map { AMMovieDetails(
+      categories: ["Test", "Test"],
+      crewMembers: [
+        AMCrewMember(name: "Filip", role: "Test"),
+        AMCrewMember(name: "Filip", role: "Test"),
+        AMCrewMember(name: "Filip", role: "Test"),
+        AMCrewMember(name: "Filip", role: "Test"),
+      ],
+      id: $0.id,
+      duration: $0.duration,
+      year: $0.year,
+      rating: $0.rating,
+      imageURL: $0.imageUrl,
+      name: $0.name,
+      releaseDate: $0.releaseDate,
+      summary: $0.summary) }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+      completion(movieDetails, nil)
+    }
+  }
+  
+}

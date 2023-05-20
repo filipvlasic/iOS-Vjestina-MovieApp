@@ -7,6 +7,7 @@
 
 import UIKit
 import MovieAppData
+import Combine
 
 class MovieCategoriesViewController: UIViewController {
   
@@ -17,15 +18,16 @@ class MovieCategoriesViewController: UIViewController {
   
   private let router: Router
   
-  private var categories: [[MovieModel]]!
-  private var categorieTitles: [String]!
+  private var viewModel: MovieCategoriesViewModel!
+  private var disposables = Set<AnyCancellable>()
+  private var categories: [[MovieCategoriesModel]]!
   
   private var tableView: UITableView!
   
-  init(router: Router) {
+  init(router: Router, viewModel: MovieCategoriesViewModel) {
     self.router = router
+    self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
-
   }
   
   required init?(coder: NSCoder) { fatalError() }
@@ -38,25 +40,19 @@ class MovieCategoriesViewController: UIViewController {
     addViews()
     styleViews()
     setupConstraints()
+    bindData()
   }
   
   private func fetchData() {
-    let model = MovieUseCase()
-    categories = [[MovieModel]]()
-    categories.append(model.popularMovies)
-    categories.append(model.freeToWatchMovies)
-    categories.append(model.trendingMovies)
-    
-    DispatchQueue.main.async { [weak self] in
-      self?.tableView.reloadData()
-    }
+    viewModel.fetchFreeToWatchMovies()
+    viewModel.fetchPopularMovies()
+    viewModel.fetchTrendingMovies()
   }
   
   private func setup() {
     title = tabBarItem.title
 
-    
-    categorieTitles = ["What's popular", "Free to Watch", "Trending"]
+    categories = .init()
     
     tableView = UITableView()
     tableView.register(MovieCategoriesTableViewCell.self, forCellReuseIdentifier: MovieCategoriesTableViewCell.identifier)
@@ -79,6 +75,36 @@ class MovieCategoriesViewController: UIViewController {
     tableView.autoPinEdge(toSuperviewEdge: .bottom)
   }
   
+  private func bindData() {
+    
+    viewModel
+      .$freeToWatchMoviesPublished
+      .sink { movies in
+        if movies.isEmpty { return }
+        self.categories.append(movies)
+        self.tableView.reloadData()
+      }
+      .store(in: &disposables)
+    
+    viewModel
+      .$popularMoviesPublished
+      .sink { movies in
+        if movies.isEmpty { return }
+        self.categories.append(movies)
+        self.tableView.reloadData()
+      }
+      .store(in: &disposables)
+    
+    viewModel
+      .$trendingMoviesPublished
+      .sink { movies in
+        if movies.isEmpty { return }
+        self.categories.append(movies)
+        self.tableView.reloadData()
+      }
+      .store(in: &disposables)
+  }
+  
 }
 
 extension MovieCategoriesViewController: UITableViewDataSource {
@@ -96,10 +122,10 @@ extension MovieCategoriesViewController: UITableViewDataSource {
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCategoriesTableViewCell.identifier, for: indexPath) as? MovieCategoriesTableViewCell else { return UITableViewCell() }
-    
-    let categoryURL = categories[indexPath.section].map { URL(string: $0.imageUrl) } // compactMap
+  
+    let categoryURL = categories[indexPath.section].map { URL(string: $0.imageURL) } // compactMap
     let ids = categories[indexPath.section].map { $0.id }
-    let title = categorieTitles[indexPath.section]
+    let title = categories[indexPath.section][0].category
     cell.configure(with: categoryURL, categoryTitle: title, ids: ids)
     cell.didTap = { [weak self] (id: Int) in
       self?.router.showMovieDetails(with: id)
@@ -117,7 +143,7 @@ extension MovieCategoriesViewController: UITableViewDelegate {
   }
 
   func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-    section == (categorieTitles.count - 1) ? 0 : Constants.sectionSpacing
+    Constants.sectionSpacing
   }
 
 }

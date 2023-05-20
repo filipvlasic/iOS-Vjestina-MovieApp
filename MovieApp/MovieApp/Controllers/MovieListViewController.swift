@@ -7,6 +7,7 @@
 
 import UIKit
 import MovieAppData
+import Combine
 
 class MovieListViewController: UIViewController {
   
@@ -18,7 +19,9 @@ class MovieListViewController: UIViewController {
   }
   
   private let router: Router
-  private var allMovies: [MovieModel]! // init
+  private var allMovies: [MovieListModel]!
+  private var viewModel: MovieListViewModel!
+  private var disposables = Set<AnyCancellable>()
   
   private var collectionView: UICollectionView!
   
@@ -26,31 +29,31 @@ class MovieListViewController: UIViewController {
     super.viewDidLoad()
     
     setupViews()
+    fetchData()
     addViews()
     styleViews()
     setupConstraints()
+    bindData()
   }
   
-  init(router: Router) {
+  init(router: Router, viewModel: MovieListViewModel) {
     self.router = router
+    self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
   
   required init?(coder: NSCoder) { fatalError() }
-  
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    allMovies = MovieUseCase().allMovies
-    DispatchQueue.main.async { [weak self] in
-      self?.collectionView.reloadData()
-    }
-  }
   
   private func setupViews() {
     collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     collectionView.register(MovieListCollectionViewCell.self, forCellWithReuseIdentifier: MovieListCollectionViewCell.identifier)
     collectionView.dataSource = self
     collectionView.delegate = self
+  }
+  
+  private func fetchData() {
+    allMovies = .init()
+    viewModel.fetchMovies()
   }
   
   private func addViews() {
@@ -66,6 +69,17 @@ class MovieListViewController: UIViewController {
   private func setupConstraints() {
     collectionView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
     collectionView.autoPinEdge(toSuperviewEdge: .bottom)
+  }
+  
+  private func bindData() {
+    viewModel
+      .$allMovies
+      .sink { movies in
+        if movies.isEmpty { return }
+        self.allMovies = movies
+        self.collectionView.reloadData()
+      }
+      .store(in: &disposables)
   }
   
 }
@@ -85,7 +99,7 @@ extension MovieListViewController: UICollectionViewDataSource {
     }
     
     let index = indexPath.row
-    let url = URL(string: allMovies[index].imageUrl)
+    let url = URL(string: allMovies[index].imageURL)
     let name = allMovies[index].name
     let summary = allMovies[index].summary
     cell.configure(url: url, name: name, summary: summary)

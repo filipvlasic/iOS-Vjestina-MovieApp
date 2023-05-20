@@ -13,7 +13,7 @@ struct MovieHeaderViewModel {
   let name: String
   let year: Int
   let releaseDate: String
-  let categories: [MovieCategoryModel]
+  let categories: [String]
   let duration: Int
   let imageUrl: URL?
 }
@@ -150,7 +150,7 @@ extension MovieHeaderView {
     categories.attributedText = convertCategories(model.categories, duration: model.duration)
   }
   
-  private func convertCategories(_ categories: [MovieCategoryModel], duration: Int) -> NSAttributedString {
+  private func convertCategories(_ categories: [String], duration: Int) -> NSAttributedString {
     let normalText = categories.map { "\($0)".capitalized }.joined(separator: ", ")
     let boldText = convertMinutesToHours(duration)
     
