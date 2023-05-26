@@ -8,10 +8,11 @@
 import UIKit
 
 class Router {
-  let navigationController: UINavigationController
+  private let navigationController: UINavigationController
+  private let apiClient = NativeAPIClient()
   
-  init(navigationController: UINavigationController) {
-    self.navigationController = navigationController
+  init() {
+    self.navigationController = UINavigationController()
   }
   
   func start(in window: UIWindow?) {
@@ -21,7 +22,7 @@ class Router {
     let favoritesVC = createFavoritesVC()
     let tabBarController = createTabBarController(with: [navigationController, favoritesVC])
     
-//    let movieListVC = MovieListViewController(router: self)
+//    let movieListVC = MovieListViewController(router: self, viewModel: MovieListViewModel(apiClient: apiClient))
 //    movieListVC.title = "Movie List"
 //    navigationController.setViewControllers([movieListVC], animated: true)
     
@@ -31,7 +32,7 @@ class Router {
   }
   
   private func createMovieCategoriesVC() -> MovieCategoriesViewController {
-    let movieCategoriesVC = MovieCategoriesViewController(router: self)
+    let movieCategoriesVC = MovieCategoriesViewController(router: self, viewModel: MovieCategoriesViewModel(apiClient: apiClient))
     movieCategoriesVC.tabBarItem = UITabBarItem(
       title: "Movie List",
       image: .tabMovieListImage,
@@ -56,7 +57,7 @@ class Router {
   }
   
   func showMovieDetails(with id: Int) {
-    let movieDetailsVC = MovieDetailsViewController(id: id)
+    let movieDetailsVC = MovieDetailsViewController(id: id, viewModel: MovieDetailsViewModel(apiClient: apiClient))
     movieDetailsVC.title = "Movie Details"
     navigationController.pushViewController(movieDetailsVC, animated: true)
   }
