@@ -8,6 +8,16 @@
 import UIKit
 
 class FavoritesViewController: UIViewController {
+  
+  private enum Constants {
+    static let cellHeight: CGFloat = 167
+    static let cellSpacing: CGFloat = 8
+    static let titleColor = UIColor(red: 11/255, green: 37/255, blue: 63/255, alpha: 1)
+    
+    static let numberOfItemsInRow: CGFloat = 3
+    static let itemSpacing: CGFloat = 8
+    static let marginSpacing: CGFloat = 16
+  }
 
   private var router: Router
   private var apiClient: APIClient
@@ -68,13 +78,19 @@ class FavoritesViewController: UIViewController {
     
     collectionView.register(MovieCategoriesCollectionViewCell.self, forCellWithReuseIdentifier: MovieCategoriesCollectionViewCell.identifier)
     collectionView.dataSource = self
+    collectionView.delegate = self
+    collectionView.contentInset = UIEdgeInsets(
+        top: 0,
+        left: Constants.marginSpacing,
+        bottom: 0,
+        right: Constants.marginSpacing)
   }
   
   private func setupConstraints() {
     titleLabel.autoPinEdgesToSuperviewSafeArea(with: .init(top: 16, left: 16, bottom: 0, right: 16), excludingEdge: .bottom)
     
     collectionView.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 32)
-    collectionView.autoPinEdgesToSuperviewSafeArea(with: .init(top: 0, left: 16, bottom: 16, right: 16), excludingEdge: .top)
+    collectionView.autoPinEdgesToSuperviewSafeArea(with: .init(top: 0, left: 0, bottom: 16, right: 0), excludingEdge: .top)
   }
   
   private func getFavoriteMovies() {
@@ -82,6 +98,14 @@ class FavoritesViewController: UIViewController {
     ids = movies
     fetchData()
     collectionView.reloadData()
+  }
+  
+  private func calculateEntityCellWidth(collectionViewWidth: CGFloat) -> CGFloat {
+    let marginesSpace = 2 * Constants.marginSpacing
+    let interItemsSpace = (Constants.numberOfItemsInRow - 1) * Constants.itemSpacing
+    let emptySpace = marginesSpace + interItemsSpace
+    let cellWidth = (collectionViewWidth - emptySpace) / Constants.numberOfItemsInRow
+    return cellWidth
   }
   
 }
@@ -130,5 +154,19 @@ extension FavoritesViewController: UICollectionViewDataSource {
 }
 
 extension FavoritesViewController: UICollectionViewDelegateFlowLayout {
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    CGSize(width: calculateEntityCellWidth(collectionViewWidth: collectionView.bounds.width), height: Constants.cellHeight)
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    Constants.itemSpacing // Cell spacing
+  }
+  
+  func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    Constants.itemSpacing * 2 // Row spacing
+  }
+}
+
+extension FavoritesViewController: UICollectionViewDelegate {
   
 }
