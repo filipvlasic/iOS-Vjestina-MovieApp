@@ -41,11 +41,11 @@ class Router {
   }
   
   private func createFavoritesVC() -> FavoritesViewController {
-    let favoritesVC = FavoritesViewController()
+    let favoritesVC = FavoritesViewController(router: self, apiClient: apiClient)
     favoritesVC.tabBarItem = UITabBarItem(
       title: "Favorites",
-      image: .tabFavoritesImage,
-      selectedImage: .tabFavoritesSelectedImage)
+      image: .heart,
+      selectedImage: .heartFill)
     return favoritesVC
   }
   

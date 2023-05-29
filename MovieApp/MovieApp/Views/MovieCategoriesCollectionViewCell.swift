@@ -13,6 +13,9 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
     static let heartBackgroundColor = UIColor(red: 11/255, green: 37/255, blue: 63/255, alpha: 0.3)
   }
   
+  private var movieId = 0
+  private var didTapHeart: ((Int) -> Void)?
+  
   static let identifier = String(describing: MovieCategoriesCollectionViewCell.self)
   
   private var imageView: UIImageView!
@@ -25,6 +28,7 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
     addViews()
     styleViews()
     setupConstraints()
+    setupActions()
   }
   
   required init?(coder: NSCoder) { fatalError() }
@@ -43,7 +47,6 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
     imageView.layer.cornerRadius = 10
     imageView.clipsToBounds = true
     
-    heart.setImage(UIImage(systemName: "heart"), for: .normal)
     heart.tintColor = .white
     heart.backgroundColor = Constants.heartBackgroundColor
     heart.layer.cornerRadius = 16
@@ -57,6 +60,15 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
     heart.autoSetDimensions(to: CGSize(width: 32, height: 32))
   }
   
+  private func setupActions() {
+    heart.addTarget(self, action: #selector(tap), for: .touchUpInside)
+  }
+  
+  @objc
+  private func tap() {
+    didTapHeart?(movieId)
+  }
+  
   override func prepareForReuse() {
     imageView.image = nil
   }
@@ -64,7 +76,12 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
 }
 
 extension MovieCategoriesCollectionViewCell {
-  public func configure(with url: URL?) {
-    self.imageView.kf.setImage(with: url)
+  @discardableResult
+  public func configure(with url: URL?, image: UIImage, movieId: Int, didTapHeart: @escaping (Int) -> Void) -> Self {
+    imageView.kf.setImage(with: url)
+    heart.setImage(image, for: .normal)
+    self.movieId = movieId
+    self.didTapHeart = didTapHeart
+    return self
   }
 }

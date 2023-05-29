@@ -39,6 +39,7 @@
 		2FC723282A184FCF00E5BECA /* MovieDetailsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC723272A184FCF00E5BECA /* MovieDetailsModel.swift */; };
 		2FC7232A2A18516200E5BECA /* MovieDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC723292A18516200E5BECA /* MovieDetailsViewModel.swift */; };
 		2FC7232C2A1858A900E5BECA /* MockAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC7232B2A1858A900E5BECA /* MockAPIClient.swift */; };
+		2FED3FF72A241603006656BD /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FED3FF62A241603006656BD /* Preferences.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +74,7 @@
 		2FC723272A184FCF00E5BECA /* MovieDetailsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsModel.swift; sourceTree = "<group>"; };
 		2FC723292A18516200E5BECA /* MovieDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsViewModel.swift; sourceTree = "<group>"; };
 		2FC7232B2A1858A900E5BECA /* MockAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIClient.swift; sourceTree = "<group>"; };
+		2FED3FF62A241603006656BD /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 				2F6477D329CF2AD1005F15C8 /* Assets.xcassets */,
 				2F6477D529CF2AD1005F15C8 /* LaunchScreen.storyboard */,
 				2F6477D829CF2AD1005F15C8 /* Info.plist */,
+				2FED3FF62A241603006656BD /* Preferences.swift */,
 			);
 			path = MovieApp;
 			sourceTree = "<group>";
@@ -324,6 +327,7 @@
 				2FC723202A18247700E5BECA /* MovieCategoriesModel.swift in Sources */,
 				2F6477CD29CF2AD0005F15C8 /* SceneDelegate.swift in Sources */,
 				2F9A498129E0B43600A479D5 /* MovieCategoriesViewController.swift in Sources */,
+				2FED3FF72A241603006656BD /* Preferences.swift in Sources */,
 				2FC5824529F6E49C00BF191D /* UIImage+Extensions.swift in Sources */,
 				2F2C74D529CFAF6E006F7C19 /* MovieHeaderView.swift in Sources */,
 				2F2C74CC29CF3CE5006F7C19 /* LogInViewController.swift in Sources */,

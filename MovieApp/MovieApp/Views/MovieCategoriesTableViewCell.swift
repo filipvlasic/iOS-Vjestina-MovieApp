@@ -70,7 +70,7 @@ class MovieCategoriesTableViewCell: UITableViewCell {
   
   override func prepareForReuse() {
     titleLabel.text = ""
-//    collectionView.reloadData()
+    collectionView.reloadData()
   }
 }
 
@@ -98,7 +98,31 @@ extension MovieCategoriesTableViewCell: UICollectionViewDataSource {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCategoriesCollectionViewCell.identifier, for: indexPath) as? MovieCategoriesCollectionViewCell else { return UICollectionViewCell() }
     
     let movieURL = moviesURL[indexPath.row]
-    cell.configure(with: movieURL)
+    let movieId = ids[indexPath.row]
+    var image: UIImage?
+    if let favoriteIds = Preferences.favoriteMoviesIds {
+      if favoriteIds.contains(movieId) {
+        image = .heartFill
+      } else {
+        image = .heart
+      }
+    }
+    guard let image else { return cell }
+    cell.configure(with: movieURL, image: image, movieId: movieId) { _ in
+      guard let favoriteMovies = Preferences.favoriteMoviesIds else { return }
+      var movieIds = Preferences.favoriteMoviesIds!
+      if favoriteMovies.contains(movieId) {
+        movieIds.removeAll { id in
+          id == movieId
+        }
+        Preferences.favoriteMoviesIds = movieIds
+      } else {
+        movieIds.append(movieId)
+        Preferences.favoriteMoviesIds = movieIds
+      }
+      collectionView.reloadData()
+    }
+    
     
     return cell
   }

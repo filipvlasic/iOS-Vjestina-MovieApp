@@ -34,13 +34,17 @@ class MovieCategoriesViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-
+    
     fetchData()
     setup()
     addViews()
     styleViews()
     setupConstraints()
     bindData()
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    tableView.reloadData()
   }
   
   private func fetchData() {

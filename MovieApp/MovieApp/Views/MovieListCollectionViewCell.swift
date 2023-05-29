@@ -53,14 +53,10 @@ class MovieListCollectionViewCell: UICollectionViewCell {
     name.textColor = .label
     name.font = .systemFont(ofSize: 16, weight: .bold)
     name.numberOfLines = 0
-//    name.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-//    name.setContentHuggingPriority(.defaultLow, for: .vertical)
     
     summary.textColor = Constants.summaryTextColor
     summary.font = .systemFont(ofSize: 14)
     summary.numberOfLines = 0
-//    summary.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-//    summary.setContentHuggingPriority(.defaultLow, for: .vertical)
   }
   
   private func setupConstraints() {

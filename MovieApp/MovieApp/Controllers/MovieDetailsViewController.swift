@@ -122,6 +122,16 @@ class MovieDetailsViewController: UIViewController {
   }
   
   private func updateData() {
+    
+    var image: UIImage?
+    if let favoriteIds = Preferences.favoriteMoviesIds {
+      if favoriteIds.contains(id) {
+        image = .heartFill
+      } else {
+        image = .heart
+      }
+    }
+    guard let image else { return }
     guard let model = self.model else { return }
     let movieHeaderViewModel =
     MovieHeaderViewModel(
@@ -131,7 +141,11 @@ class MovieDetailsViewController: UIViewController {
       releaseDate: model.releaseDate,
       categories: model.categories,
       duration: model.duration,
-      imageUrl: URL(string: model.imageUrl))
+      imageUrl: URL(string: model.imageUrl),
+      image: image,
+      id: model.id) { movieId in
+        self.updateData()
+      }
     movieHeaderView.update(with: movieHeaderViewModel)
     summary.text = model.summary
     moveTextToOriginalPosition()
