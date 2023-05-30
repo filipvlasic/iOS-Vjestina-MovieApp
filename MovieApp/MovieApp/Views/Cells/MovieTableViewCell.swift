@@ -70,9 +70,13 @@ class MovieTableViewCell: UITableViewCell {
 
 extension MovieTableViewCell: Configurable {
   func configure(with model: Any) {
-    guard let model = model as? MovieTableViewCellModel else { return }
-    self.model = model.movies
+    guard let model = model as? MovieTableViewCellModel, let tag = Preferences.selectedCategory?[model.movies[0].category.rawValue] else { return }
+    self.model = model.movies.filter({ $0.movieTag.rawValue == tag })
     self.didTap = model.didTap
+    self.collectionView.reloadData()
+    
+//    print(model.movies[0].category.rawValue, Preferences.selectedCategoryIndex?[model.movies[0].category.rawValue])
+//    print(model.movies[0].category.rawValue, Preferences.selectedCategory?[model.movies[0].category.rawValue])
   }
 }
 

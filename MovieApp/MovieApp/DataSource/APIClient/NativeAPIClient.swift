@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum MovieTag: String, Decodable {
+enum MovieTag: String {
     case streaming = "STREAMING"
     case onTv = "ON_TV"
     case forRent = "FOR_RENT"

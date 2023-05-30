@@ -10,5 +10,6 @@ import UIKit
 struct MovieTableViewCellModel: MovieCategoriesCellProtocol {
   var cellType: UITableViewCell.Type = MovieTableViewCell.self
   let movies: [MovieCategoriesModel]
+  var selectedMovieTag: MovieTag
   let didTap: ((Int) -> Void)?
 }

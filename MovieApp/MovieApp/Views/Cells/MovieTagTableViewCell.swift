@@ -9,8 +9,13 @@ import UIKit
 
 class MovieTagTableViewCell: UITableViewCell {
   
+  private var didTap: ((MovieTag) -> Void)?
+  private var category: MovieCategory?
   private var selectedIndex = 0 {
     didSet {
+      guard let category else { return }
+      Preferences.selectedCategoryIndex?[category.rawValue] = selectedIndex
+      Preferences.selectedCategory?[category.rawValue] = model[selectedIndex].rawValue
       updateIndicatorConstraints()
       collectionView.reloadData()
     }
@@ -37,6 +42,7 @@ class MovieTagTableViewCell: UITableViewCell {
   }
   
   private func styleViews() {
+    
     let flowLayout = UICollectionViewFlowLayout()
     flowLayout.scrollDirection = .horizontal
     collectionView.collectionViewLayout = flowLayout
@@ -62,15 +68,17 @@ class MovieTagTableViewCell: UITableViewCell {
   }
   
   private func updateIndicatorConstraints() {
+    guard let category else { return }
+    let index = Preferences.selectedCategoryIndex?[category.rawValue] ?? 0
     let selected = calculateLeadingCellsWidth()
-    let offset = 16 - collectionView.contentOffset.x + CGFloat((selectedIndex * 24)) + selected
+    let offset = 16 - collectionView.contentOffset.x + CGFloat((index * 24)) + selected
     
     nsArrayConstraints.autoRemoveConstraints()
     nsArrayConstraints = [
       indicator.autoPinEdge(toSuperviewEdge: .bottom, withInset: 8),
       indicator.autoPinEdge(toSuperviewEdge: .leading, withInset: offset),
       indicator.autoSetDimension(.height, toSize: 3),
-      indicator.autoSetDimension(.width, toSize: calculateCellWidth(index: selectedIndex))
+      indicator.autoSetDimension(.width, toSize: calculateCellWidth(index: index))
     ]
   }
   
@@ -97,14 +105,17 @@ class MovieTagTableViewCell: UITableViewCell {
   
   private func calculateCellWidth(index: Int) -> CGFloat {
     if model.isEmpty { return 0 }
+    if index >= model.count { return 0 }
     return convertToTitle(model[index]).size(withAttributes: [
         NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16, weight: .bold)
       ]).width
   }
   
   private func calculateLeadingCellsWidth() -> CGFloat {
+    guard let category else { return 0 }
+    let index = Preferences.selectedCategoryIndex?[category.rawValue] ?? 0
     var sum:CGFloat = 0
-    for i in (0..<selectedIndex) {
+    for i in (0..<index) {
       sum += calculateCellWidth(index: i)
     }
     return sum
@@ -115,7 +126,9 @@ class MovieTagTableViewCell: UITableViewCell {
 extension MovieTagTableViewCell: Configurable {
   func configure(with model: Any) {
     guard let model = model as? MovieTagTableViewCellModel else { return }
+    self.didTap = model.didTap
     self.model = model.movieTags
+    self.category = model.category
     updateIndicatorConstraints()
     collectionView.reloadData()
   }
@@ -129,8 +142,10 @@ extension MovieTagTableViewCell: UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieTagCollectionViewCell.identifier, for: indexPath) as? MovieTagCollectionViewCell else { return UICollectionViewCell() }
     
+    guard let category else { return cell }
+    let index = Preferences.selectedCategoryIndex?[category.rawValue] ?? 0
     let title = convertToTitle(model[indexPath.row])
-    let color: UIColor = indexPath.row == selectedIndex ? .red : .blue
+    let color: UIColor = indexPath.row == index ? .black : .gray
     cell.configure(with: title, color: color)
     
     return cell
@@ -141,6 +156,7 @@ extension MovieTagTableViewCell: UICollectionViewDataSource {
 extension MovieTagTableViewCell: UICollectionViewDelegate {
   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
     selectedIndex = indexPath.row
+    didTap?(model[indexPath.row])
   }
   
   func scrollViewDidScroll(_ scrollView: UIScrollView) {

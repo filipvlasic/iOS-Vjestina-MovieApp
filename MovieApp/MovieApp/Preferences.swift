@@ -23,4 +23,30 @@ enum Preferences {
       UserDefaults.standard.set(newValue, forKey: favoriteMoviesIdsKey)
     }
   }
+  
+  
+  private static let selectedCategoryIndexKey = "selectedCategoryIndexKey"
+  
+  static var selectedCategoryIndex: [String: Int]? {
+    get {
+      UserDefaults.standard.object(forKey: selectedCategoryIndexKey) as? [String : Int]
+    }
+    set {
+      UserDefaults.standard.set(newValue, forKey: selectedCategoryIndexKey)
+    }
+  }
+  
+  
+  private static let selectedCategoryKey = "selectedCategoryKey"
+  
+  static var selectedCategory: [String: String]? {
+    get {
+      UserDefaults.standard.object(forKey: selectedCategoryKey) as? [String: String]
+    }
+    set {
+      UserDefaults.standard.set(newValue, forKey: selectedCategoryKey)
+    }
+  }
+  
+  
 }

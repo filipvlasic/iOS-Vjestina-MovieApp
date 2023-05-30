@@ -9,5 +9,7 @@ import UIKit
 
 struct MovieTagTableViewCellModel: MovieCategoriesCellProtocol {
   var cellType: UITableViewCell.Type = MovieTagTableViewCell.self
+  let category: MovieCategory
   let movieTags: [MovieTag]
+  let didTap: (MovieTag) -> Void
 }

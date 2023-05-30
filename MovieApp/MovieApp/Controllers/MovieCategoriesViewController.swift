@@ -102,6 +102,7 @@ class MovieCategoriesViewController: UIViewController {
   private func populateModel(from movieCategoriesModel: [MovieCategoriesModel]) {
     let categoryTitles: [MovieCategory] = [.popular, .freeToWatch, .trending]
     categoryTitles.forEach { category in
+      
       model.append(CategoryTableViewCellModel(title: convertToTitle(category)))
       
       var movieTags: Set<MovieTag> = .init()
@@ -109,16 +110,26 @@ class MovieCategoriesViewController: UIViewController {
         .filter { category == $0.category }
         .forEach { movieTags.insert($0.movieTag) }
       let tagsSorted = Array(movieTags).sorted(by: { $0.rawValue < $1.rawValue })
-      model.append(MovieTagTableViewCellModel(movieTags: tagsSorted))
+      model.append(MovieTagTableViewCellModel(category: category, movieTags: tagsSorted, didTap: { movieTag in
+        self.tableView.reloadData()
+        
+      }))
+      
+//      Preferences.selectedCategoryIndex = [category.rawValue: 0]
+      Preferences.selectedCategoryIndex?[category.rawValue] = 0
+//      Preferences.selectedCategory = [category.rawValue: tagsSorted.first!.rawValue]
+      Preferences.selectedCategory?[category.rawValue] = tagsSorted.first!.rawValue
       
       let movies = movieCategoriesModel
         .filter { category == $0.category }
         .compactMap {
           MovieCategoriesModel(id: $0.id, imageURL: $0.imageURL, category: $0.category, movieTag: $0.movieTag)
         }
-      model.append(MovieTableViewCellModel(movies: movies, didTap: { movieId in
+      model.append(MovieTableViewCellModel(movies: movies, selectedMovieTag: tagsSorted.first!, didTap: { movieId in
         self.router.showMovieDetails(with: movieId)
       }))
+      
+      
     }
   }
   
