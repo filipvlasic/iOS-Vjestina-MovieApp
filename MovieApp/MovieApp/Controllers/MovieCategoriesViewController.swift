@@ -20,7 +20,7 @@ class MovieCategoriesViewController: UIViewController {
   
   private var viewModel: MovieCategoriesViewModel!
   private var disposables = Set<AnyCancellable>()
-  private var categories: [[MovieCategoriesModel]]!
+  private var model: [MovieCategoriesCellProtocol] = .init()
   
   private var tableView: UITableView!
   
@@ -48,18 +48,13 @@ class MovieCategoriesViewController: UIViewController {
   }
   
   private func fetchData() {
-    viewModel.fetchFreeToWatchMovies()
-    viewModel.fetchPopularMovies()
-    viewModel.fetchTrendingMovies()
+    viewModel.fetchAllMovies()
   }
   
   private func setup() {
     title = tabBarItem.title
-
-    categories = .init()
     
     tableView = UITableView()
-    tableView.register(MovieCategoriesTableViewCell.self, forCellReuseIdentifier: MovieCategoriesTableViewCell.identifier)
     tableView.dataSource = self
     tableView.delegate = self
   }
@@ -80,38 +75,19 @@ class MovieCategoriesViewController: UIViewController {
   }
   
   private func bindData() {
-    
     viewModel
-      .$freeToWatchMoviesPublished
+      .$allMoviesPublished
       .receive(on: DispatchQueue.main)
       .sink { movies in
         if movies.isEmpty { return }
-        self.categories.append(movies)
-        self.tableView.reloadData()
-      }
-      .store(in: &disposables)
-    
-    viewModel
-      .$popularMoviesPublished
-      .receive(on: DispatchQueue.main)
-      .sink { movies in
-        if movies.isEmpty { return }
-        self.categories.append(movies)
-        self.tableView.reloadData()
-      }
-      .store(in: &disposables)
-    
-    viewModel
-      .$trendingMoviesPublished
-      .receive(on: DispatchQueue.main)
-      .sink { movies in
-        if movies.isEmpty { return }
-        self.categories.append(movies)
+        self.populateModel(from: movies)
+        self.registerCells()
         self.tableView.reloadData()
       }
       .store(in: &disposables)
   }
   
+  // TODO: u helper
   private func convertToTitle(_ category: MovieCategory) -> String {
     switch category {
     case .freeToWatch:
@@ -123,50 +99,52 @@ class MovieCategoriesViewController: UIViewController {
     }
   }
   
+  private func populateModel(from movieCategoriesModel: [MovieCategoriesModel]) {
+    let categoryTitles: [MovieCategory] = [.popular, .freeToWatch, .trending]
+    categoryTitles.forEach { category in
+      model.append(CategoryTableViewCellModel(title: convertToTitle(category)))
+      
+      var movieTags: Set<MovieTag> = .init()
+      movieCategoriesModel
+        .filter { category == $0.category }
+        .forEach { movieTags.insert($0.movieTag) }
+      let tagsSorted = Array(movieTags).sorted(by: { $0.rawValue < $1.rawValue })
+      model.append(MovieTagTableViewCellModel(movieTags: tagsSorted))
+      
+      let movies = movieCategoriesModel
+        .filter { category == $0.category }
+        .compactMap {
+          MovieCategoriesModel(id: $0.id, imageURL: $0.imageURL, category: $0.category, movieTag: $0.movieTag)
+        }
+      model.append(MovieTableViewCellModel(movies: movies))
+    }
+  }
+  
+  private func registerCells() {
+    model.forEach { tableView.register($0.cellType, forCellReuseIdentifier: $0.identifier) }
+  }
+  
 }
 
 extension MovieCategoriesViewController: UITableViewDataSource {
+ 
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return 1
-  }
-  
-  func numberOfSections(in tableView: UITableView) -> Int {
-    if let categories {
-      return categories.count
-    } else {
-      return 0
-    }
+    model.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCategoriesTableViewCell.identifier, for: indexPath) as? MovieCategoriesTableViewCell else { return UITableViewCell() }
-  
-    let categoryURL = categories[indexPath.section].map { URL(string: $0.imageURL) }
-    let ids = categories[indexPath.section].map { $0.id }
-    let title = convertToTitle(categories[indexPath.section][0].category)
-    let category = categories[indexPath.section][0].category
-    var movieTags: Set<MovieTag> = .init()
-    categories[indexPath.section]
-      .filter { $0.category == category }
-      .forEach { movieTags.insert($0.movieTag) }
-    cell.configure(with: categoryURL, categoryTitle: title, ids: ids, movieTags: movieTags)
-    cell.didTap = { [weak self] (id: Int) in
-      self?.router.showMovieDetails(with: id)
+    let currentModel = model[indexPath.row]
+    let cell = tableView.dequeueReusableCell(withIdentifier: currentModel.identifier, for: indexPath)
+
+    if let configure = cell as? Configurable {
+      configure.configure(with: currentModel)
     }
-      
+    
     return cell
   }
 }
 
 
 extension MovieCategoriesViewController: UITableViewDelegate {
-  
-  func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-    UIView()
-  }
-
-  func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-    Constants.sectionSpacing
-  }
 
 }

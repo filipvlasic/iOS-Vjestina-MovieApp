@@ -23,9 +23,11 @@ class MovieCategoriesTableViewCell: UITableViewCell {
   private var ids: [Int]!
   private var movieTags: Set<MovieTag> = .init()
   
+  private var labels: [UILabel] = .init()
+  
   private var titleLabel: UILabel!
-  private var movieTagView: MovieTagView!
-  private var collectionView: UICollectionView!
+  private var categoriesCollectionView: UICollectionView!
+  private var moviesCollectionView: UICollectionView!
 
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
     super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -40,25 +42,28 @@ class MovieCategoriesTableViewCell: UITableViewCell {
   
   private func setup() {
     titleLabel = UILabel()
-    movieTagView = MovieTagView()
+    
+//    categoriesCollectionView.register(<#T##cellClass: AnyClass?##AnyClass?#>, forCellWithReuseIdentifier: <#T##String#>)
+//    categoriesCollectionView.dataSource = self
+//    categoriesCollectionView.delegate = self
     
     let flowLayout = UICollectionViewFlowLayout()
     flowLayout.scrollDirection = .horizontal
-    collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-    collectionView.register(MovieCategoriesCollectionViewCell.self, forCellWithReuseIdentifier: MovieCategoriesCollectionViewCell.identifier)
-    collectionView.dataSource = self
-    collectionView.delegate = self
+    moviesCollectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+    moviesCollectionView.register(MovieCategoriesCollectionViewCell.self, forCellWithReuseIdentifier: MovieCategoriesCollectionViewCell.identifier)
+    moviesCollectionView.dataSource = self
+    moviesCollectionView.delegate = self
   }
   
   private func addViews() {
     contentView.addSubview(titleLabel)
-    contentView.addSubview(movieTagView)
-    contentView.addSubview(collectionView)
+    contentView.addSubview(moviesCollectionView)
   }
   
   private func styleViews() {
     titleLabel.font = .systemFont(ofSize: 20, weight: .bold)
     titleLabel.textColor = Constants.titleColor
+
   }
   
   private func setupConstraints() {
@@ -66,18 +71,14 @@ class MovieCategoriesTableViewCell: UITableViewCell {
     titleLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 16)
     titleLabel.autoPinEdge(toSuperviewEdge: .top)
     
-    movieTagView.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 16)
-    movieTagView.autoPinEdge(toSuperviewEdge: .leading, withInset: 16)
-    movieTagView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 16)
-    
-    collectionView.autoPinEdge(.top, to: .bottom, of: movieTagView, withOffset: 16)
-    collectionView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0), excludingEdge: .top)
-    collectionView.autoSetDimension(.height, toSize: Constants.cellHeight)
+    moviesCollectionView.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 16)
+    moviesCollectionView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0), excludingEdge: .top)
+    moviesCollectionView.autoSetDimension(.height, toSize: Constants.cellHeight)
   }
   
   override func prepareForReuse() {
     titleLabel.text = ""
-    collectionView.reloadData()
+    moviesCollectionView.reloadData()
   }
 }
 
@@ -87,9 +88,7 @@ extension MovieCategoriesTableViewCell {
     self.titleLabel.text = categoryTitle
     self.ids = ids
     self.movieTags = movieTags
-    self.collectionView.reloadData()
-    
-    movieTagView.update(with: Array(movieTags))
+    self.moviesCollectionView.reloadData()
   }
 }
 

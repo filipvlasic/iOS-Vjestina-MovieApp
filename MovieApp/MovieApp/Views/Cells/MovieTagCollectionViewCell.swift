@@ -29,17 +29,22 @@ class MovieTagCollectionViewCell: UICollectionViewCell {
   
   private func styleViews() {
     titleLabel.textColor = .black
-    titleLabel.font = .systemFont(ofSize: 16, weight: .bold)
+    titleLabel.font = .systemFont(ofSize: 16)
   }
   
   private func setupConstraints() {
     titleLabel.autoPinEdgesToSuperviewEdges()
   }
   
+  override func prepareForReuse() {
+    titleLabel.text = ""
+  }
+  
 }
 
 extension MovieTagCollectionViewCell {
-  func configure(with title: String) {
+  func configure(with title: String, color: UIColor) {
     titleLabel.text = title
+    titleLabel.textColor = color
   }
 }

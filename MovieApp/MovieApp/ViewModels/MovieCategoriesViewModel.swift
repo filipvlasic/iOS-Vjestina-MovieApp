@@ -12,6 +12,7 @@ class MovieCategoriesViewModel {
   @Published private(set) var freeToWatchMoviesPublished: [MovieCategoriesModel] = .init()
   @Published private(set) var popularMoviesPublished: [MovieCategoriesModel] = .init()
   @Published private(set) var trendingMoviesPublished: [MovieCategoriesModel] = .init()
+  @Published private(set) var allMoviesPublished: [MovieCategoriesModel] = .init()
   
   private let apiClient: APIClient
   
@@ -47,6 +48,14 @@ class MovieCategoriesViewModel {
       let res = await apiClient.getPopularMovies()
       guard let res else { return }
       trendingMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageUrl, category: $0.category, movieTag: $0.movieTag) })
+    }
+  }
+  
+  func fetchAllMovies() {
+    Task.init {
+      let res = await apiClient.getAllMovies()
+      guard let res else { return }
+      allMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageUrl, category: $0.category, movieTag: $0.movieTag) })
     }
   }
   
