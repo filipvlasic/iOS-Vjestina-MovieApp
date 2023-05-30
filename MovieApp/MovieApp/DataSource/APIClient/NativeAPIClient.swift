@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import MovieAppData
 
 enum MovieTag: String, Decodable {
     case streaming = "STREAMING"
@@ -29,40 +28,42 @@ struct NativeAPIClient: APIClient {
   let session = URLSession.shared
   let decoder = JSONDecoder()
   
-  func getFreeToWatchMovies() async -> [AMMovie]? {
-    var movies = [AMMovie]()
-    async let a = makeMovieCall(path: "free-to-watch", category: MovieTag.movie.rawValue)
-    async let b = makeMovieCall(path: "free-to-watch", category: MovieTag.tvShow.rawValue)
+  func getFreeToWatchMovies() async -> [MovieModel]? {
+    var movies = [MovieModel]()
+    async let a = makeMovieCall(movieCategory: MovieCategory.freeToWatch, movieTag: MovieTag.movie)
+    async let b = makeMovieCall(movieCategory: MovieCategory.freeToWatch, movieTag: MovieTag.tvShow)
     
     let c = await [a, b]
-    c.forEach { movies.append(contentsOf: $0) }
+    c.forEach {
+      movies.append(contentsOf: $0)
+    }
     return movies
   }
   
-  func getPopularMovies() async -> [AMMovie]? {
-    var movies = [AMMovie]()
-    async let a = makeMovieCall(path: "popular", category: MovieTag.forRent.rawValue)
-    async let b = makeMovieCall(path: "popular", category: MovieTag.inTheaters.rawValue)
-    async let c = makeMovieCall(path: "popular", category: MovieTag.onTv.rawValue)
-    async let d = makeMovieCall(path: "popular", category: MovieTag.streaming.rawValue)
+  func getPopularMovies() async -> [MovieModel]? {
+    var movies = [MovieModel]()
+    async let a = makeMovieCall(movieCategory: MovieCategory.popular, movieTag: MovieTag.forRent)
+    async let b = makeMovieCall(movieCategory: MovieCategory.popular, movieTag: MovieTag.inTheaters)
+    async let c = makeMovieCall(movieCategory: MovieCategory.popular, movieTag: MovieTag.onTv)
+    async let d = makeMovieCall(movieCategory: MovieCategory.popular, movieTag: MovieTag.streaming)
 
     let f = await [a, b, c, d]
     f.forEach { movies.append(contentsOf: $0) }
     return movies
   }
   
-  func getTrendingMovies() async -> [AMMovie]? {
-    var movies = [AMMovie]()
-    async let a = makeMovieCall(path: "trending", category: MovieTag.trendingThisWeek.rawValue)
-    async let b = makeMovieCall(path: "trending", category: MovieTag.trendingToday.rawValue)
+  func getTrendingMovies() async -> [MovieModel]? {
+    var movies = [MovieModel]()
+    async let a = makeMovieCall(movieCategory: MovieCategory.trending, movieTag: MovieTag.trendingThisWeek)
+    async let b = makeMovieCall(movieCategory: MovieCategory.trending, movieTag: MovieTag.trendingToday)
 
     let c = await [a, b]
     c.forEach { movies.append(contentsOf: $0) }
     return movies
   }
   
-  func getAllMovies() async -> [AMMovie]? {
-    var movies = [AMMovie]()
+  func getAllMovies() async -> [MovieModel]? {
+    var movies = [MovieModel]()
     async let a = getTrendingMovies()
     async let b = getPopularMovies()
     async let c = getFreeToWatchMovies()
@@ -79,9 +80,9 @@ struct NativeAPIClient: APIClient {
     return c
   }
   
-  private func makeMovieCall(path: String, category: String) async -> [AMMovie] {
+  private func makeMovieCall(movieCategory: MovieCategory, movieTag: MovieTag) async -> [MovieModel] {
     var movies = [AMMovie]()
-    guard let url = URL(string: "\(Constants.baseURL)/api/v1/movie/\(path)?criteria=\(category)") else { return []}
+    guard let url = URL(string: "\(Constants.baseURL)/api/v1/movie/\(movieCategory.rawValue)?criteria=\(movieTag.rawValue)") else { return []}
     var urlRequest = URLRequest(url: url)
     urlRequest.setValue("Bearer \(Constants.key)", forHTTPHeaderField: "Authorization")
     
@@ -98,8 +99,10 @@ struct NativeAPIClient: APIClient {
     } catch (let error) {
       print(error)
     }
-    
-    return movies
+    let movieModels = movies.compactMap { amMovie in
+      MovieModel(id: amMovie.id, imageUrl: amMovie.imageUrl, name: amMovie.name, summary: amMovie.summary, year: amMovie.year, category: movieCategory, movieTag: movieTag)
+    }
+    return movieModels
   }
   
   private func makeMovieDetailsCall(id: Int) async -> AMMovieDetails? {

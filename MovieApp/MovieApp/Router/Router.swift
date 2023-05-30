@@ -22,12 +22,7 @@ class Router {
     let favoritesVC = createFavoritesVC()
     let tabBarController = createTabBarController(with: [navigationController, favoritesVC])
     
-//    let movieListVC = MovieListViewController(router: self, viewModel: MovieListViewModel(apiClient: apiClient))
-//    movieListVC.title = "Movie List"
-//    navigationController.setViewControllers([movieListVC], animated: true)
-    
     window?.rootViewController = tabBarController
-//    window?.rootViewController = navigationController
     window?.makeKeyAndVisible()
   }
   

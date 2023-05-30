@@ -8,9 +8,9 @@
 import Foundation
 
 protocol APIClient {
-  func getFreeToWatchMovies() async -> [AMMovie]?
-  func getPopularMovies() async -> [AMMovie]?
-  func getTrendingMovies() async -> [AMMovie]?
-  func getAllMovies() async -> [AMMovie]?
+  func getFreeToWatchMovies() async -> [MovieModel]?
+  func getPopularMovies() async -> [MovieModel]?
+  func getTrendingMovies() async -> [MovieModel]?
+  func getAllMovies() async -> [MovieModel]?
   func getMovieDetails(with id: Int) async -> AMMovieDetails?
 }

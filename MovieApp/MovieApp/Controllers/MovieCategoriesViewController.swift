@@ -6,8 +6,8 @@
 //
 
 import UIKit
-import MovieAppData
 import Combine
+import PureLayout
 
 class MovieCategoriesViewController: UIViewController {
   
@@ -112,6 +112,17 @@ class MovieCategoriesViewController: UIViewController {
       .store(in: &disposables)
   }
   
+  private func convertToTitle(_ category: MovieCategory) -> String {
+    switch category {
+    case .freeToWatch:
+      return "Free To Watch"
+    case .popular:
+      return "What's Popular"
+    case .trending:
+      return "Trending"
+    }
+  }
+  
 }
 
 extension MovieCategoriesViewController: UITableViewDataSource {
@@ -130,10 +141,15 @@ extension MovieCategoriesViewController: UITableViewDataSource {
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCategoriesTableViewCell.identifier, for: indexPath) as? MovieCategoriesTableViewCell else { return UITableViewCell() }
   
-    let categoryURL = categories[indexPath.section].map { URL(string: $0.imageURL) } // compactMap
+    let categoryURL = categories[indexPath.section].map { URL(string: $0.imageURL) }
     let ids = categories[indexPath.section].map { $0.id }
-    let title = categories[indexPath.section][0].category
-    cell.configure(with: categoryURL, categoryTitle: title, ids: ids)
+    let title = convertToTitle(categories[indexPath.section][0].category)
+    let category = categories[indexPath.section][0].category
+    var movieTags: Set<MovieTag> = .init()
+    categories[indexPath.section]
+      .filter { $0.category == category }
+      .forEach { movieTags.insert($0.movieTag) }
+    cell.configure(with: categoryURL, categoryTitle: title, ids: ids, movieTags: movieTags)
     cell.didTap = { [weak self] (id: Int) in
       self?.router.showMovieDetails(with: id)
     }

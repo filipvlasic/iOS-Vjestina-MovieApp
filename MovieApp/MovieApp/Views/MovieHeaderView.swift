@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import MovieAppData
 
 struct MovieHeaderViewModel {
   let rating: Double

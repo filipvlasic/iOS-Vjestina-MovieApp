@@ -23,7 +23,11 @@ class MovieCategoriesViewModel {
     Task.init {
       let res = await apiClient.getFreeToWatchMovies()
       guard let res else { return }
-      freeToWatchMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageUrl, category: "Free To Watch") })
+      freeToWatchMoviesPublished = res.map({ MovieCategoriesModel(
+        id: $0.id,
+        imageURL: $0.imageUrl,
+        category: $0.category,
+        movieTag: $0.movieTag) })
     }
   }
   
@@ -31,7 +35,10 @@ class MovieCategoriesViewModel {
     Task.init {
       let res = await apiClient.getTrendingMovies()
       guard let res else { return }
-      trendingMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageUrl, category: "Trending") })
+      trendingMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id,
+                                                               imageURL: $0.imageUrl,
+                                                               category: $0.category,
+                                                               movieTag: $0.movieTag) })
     }
   }
   
@@ -39,7 +46,7 @@ class MovieCategoriesViewModel {
     Task.init {
       let res = await apiClient.getPopularMovies()
       guard let res else { return }
-      trendingMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageUrl, category: "What's popular") })
+      trendingMoviesPublished = res.map({ MovieCategoriesModel(id: $0.id, imageURL: $0.imageUrl, category: $0.category, movieTag: $0.movieTag) })
     }
   }
   

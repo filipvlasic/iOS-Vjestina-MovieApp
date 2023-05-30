@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import MovieAppData
 
 class MovieCategoriesTableViewCell: UITableViewCell {
   
@@ -22,8 +21,10 @@ class MovieCategoriesTableViewCell: UITableViewCell {
   static let identifier = String(describing: MovieCategoriesTableViewCell.self)
   private var moviesURL: [URL?]!
   private var ids: [Int]!
+  private var movieTags: Set<MovieTag> = .init()
   
   private var titleLabel: UILabel!
+  private var movieTagView: MovieTagView!
   private var collectionView: UICollectionView!
 
   override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -39,6 +40,7 @@ class MovieCategoriesTableViewCell: UITableViewCell {
   
   private func setup() {
     titleLabel = UILabel()
+    movieTagView = MovieTagView()
     
     let flowLayout = UICollectionViewFlowLayout()
     flowLayout.scrollDirection = .horizontal
@@ -50,6 +52,7 @@ class MovieCategoriesTableViewCell: UITableViewCell {
   
   private func addViews() {
     contentView.addSubview(titleLabel)
+    contentView.addSubview(movieTagView)
     contentView.addSubview(collectionView)
   }
   
@@ -63,7 +66,11 @@ class MovieCategoriesTableViewCell: UITableViewCell {
     titleLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 16)
     titleLabel.autoPinEdge(toSuperviewEdge: .top)
     
-    collectionView.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 16)
+    movieTagView.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 16)
+    movieTagView.autoPinEdge(toSuperviewEdge: .leading, withInset: 16)
+    movieTagView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 16)
+    
+    collectionView.autoPinEdge(.top, to: .bottom, of: movieTagView, withOffset: 16)
     collectionView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0), excludingEdge: .top)
     collectionView.autoSetDimension(.height, toSize: Constants.cellHeight)
   }
@@ -75,11 +82,14 @@ class MovieCategoriesTableViewCell: UITableViewCell {
 }
 
 extension MovieCategoriesTableViewCell {
-  public func configure(with moviesURL: [URL?], categoryTitle: String, ids: [Int]) {
+  public func configure(with moviesURL: [URL?], categoryTitle: String, ids: [Int], movieTags: Set<MovieTag>) {
     self.moviesURL = moviesURL
     self.titleLabel.text = categoryTitle
     self.ids = ids
+    self.movieTags = movieTags
     self.collectionView.reloadData()
+    
+    movieTagView.update(with: Array(movieTags))
   }
 }
 

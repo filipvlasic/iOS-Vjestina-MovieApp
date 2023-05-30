@@ -9,5 +9,7 @@ import Foundation
 
 struct MovieCategoriesModel {
   let id: Int
-  let imageURL, category: String
+  let imageURL: String
+  let category: MovieCategory
+  let movieTag: MovieTag
 }
