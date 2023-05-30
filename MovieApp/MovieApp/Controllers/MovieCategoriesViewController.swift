@@ -129,7 +129,7 @@ class MovieCategoriesViewController: UIViewController {
         self.router.showMovieDetails(with: movieId)
       }))
       
-      
+      model.append(SpacerTableViewCellModel())
     }
   }
   
