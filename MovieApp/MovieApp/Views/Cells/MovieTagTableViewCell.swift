@@ -40,6 +40,7 @@ class MovieTagTableViewCell: UITableViewCell {
     let flowLayout = UICollectionViewFlowLayout()
     flowLayout.scrollDirection = .horizontal
     collectionView.collectionViewLayout = flowLayout
+    collectionView.showsHorizontalScrollIndicator = false
     collectionView.dataSource = self
     collectionView.delegate = self
     collectionView.register(MovieTagCollectionViewCell.self, forCellWithReuseIdentifier: MovieTagCollectionViewCell.identifier)
@@ -53,6 +54,11 @@ class MovieTagTableViewCell: UITableViewCell {
     collectionView.autoPinEdge(toSuperviewEdge: .top)
     collectionView.autoPinEdge(toSuperviewEdge: .bottom)
     collectionView.autoSetDimension(.height, toSize: 50)
+  }
+  
+  override func prepareForReuse() {
+    super.prepareForReuse()
+    collectionView.reloadData()
   }
   
   private func updateIndicatorConstraints() {

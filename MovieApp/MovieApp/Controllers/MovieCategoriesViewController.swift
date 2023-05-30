@@ -116,7 +116,9 @@ class MovieCategoriesViewController: UIViewController {
         .compactMap {
           MovieCategoriesModel(id: $0.id, imageURL: $0.imageURL, category: $0.category, movieTag: $0.movieTag)
         }
-      model.append(MovieTableViewCellModel(movies: movies))
+      model.append(MovieTableViewCellModel(movies: movies, didTap: { movieId in
+        self.router.showMovieDetails(with: movieId)
+      }))
     }
   }
   

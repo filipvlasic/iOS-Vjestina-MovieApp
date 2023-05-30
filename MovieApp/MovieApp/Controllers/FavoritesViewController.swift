@@ -134,7 +134,7 @@ extension FavoritesViewController: UICollectionViewDataSource {
       }
     }
     guard let image else { return cell }
-    cell.configure(with: movieURL, image: image, movieId: movieId) { _ in
+    cell.configure(with: movieURL, image: image) {
       guard let favoriteMovies = Preferences.favoriteMoviesIds else { return }
       var movieIds = Preferences.favoriteMoviesIds!
       if favoriteMovies.contains(movieId) {

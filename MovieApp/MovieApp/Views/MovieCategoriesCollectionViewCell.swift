@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class MovieCategoriesCollectionViewCell: UICollectionViewCell {
   
@@ -13,8 +14,7 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
     static let heartBackgroundColor = UIColor(red: 11/255, green: 37/255, blue: 63/255, alpha: 0.3)
   }
   
-  private var movieId = 0
-  private var didTapHeart: ((Int) -> Void)?
+  private var didTapHeart: (() -> Void)?
   
   static let identifier = String(describing: MovieCategoriesCollectionViewCell.self)
   
@@ -66,7 +66,7 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
   
   @objc
   private func tap() {
-    didTapHeart?(movieId)
+    didTapHeart?()
   }
   
   override func prepareForReuse() {
@@ -77,10 +77,9 @@ class MovieCategoriesCollectionViewCell: UICollectionViewCell {
 
 extension MovieCategoriesCollectionViewCell {
   @discardableResult
-  public func configure(with url: URL?, image: UIImage, movieId: Int, didTapHeart: @escaping (Int) -> Void) -> Self {
+  public func configure(with url: URL?, image: UIImage, didTapHeart: @escaping () -> Void) -> Self {
     imageView.kf.setImage(with: url)
     heart.setImage(image, for: .normal)
-    self.movieId = movieId
     self.didTapHeart = didTapHeart
     return self
   }
