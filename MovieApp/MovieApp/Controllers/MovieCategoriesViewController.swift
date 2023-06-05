@@ -6,7 +6,8 @@
 //
 
 import UIKit
-import MovieAppData
+import Combine
+import PureLayout
 
 class MovieCategoriesViewController: UIViewController {
   
@@ -17,49 +18,43 @@ class MovieCategoriesViewController: UIViewController {
   
   private let router: Router
   
-  private var categories: [[MovieModel]]!
-  private var categorieTitles: [String]!
+  private var viewModel: MovieCategoriesViewModel!
+  private var disposables = Set<AnyCancellable>()
+  private var model: [MovieCategoriesCellProtocol] = .init()
   
   private var tableView: UITableView!
   
-  init(router: Router) {
+  init(router: Router, viewModel: MovieCategoriesViewModel) {
     self.router = router
+    self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
-
   }
   
   required init?(coder: NSCoder) { fatalError() }
   
   override func viewDidLoad() {
     super.viewDidLoad()
-
+    
     fetchData()
     setup()
     addViews()
     styleViews()
     setupConstraints()
+    bindData()
+  }
+  
+  override func viewWillAppear(_ animated: Bool) {
+    tableView.reloadData()
   }
   
   private func fetchData() {
-    let model = MovieUseCase()
-    categories = [[MovieModel]]()
-    categories.append(model.popularMovies)
-    categories.append(model.freeToWatchMovies)
-    categories.append(model.trendingMovies)
-    
-    DispatchQueue.main.async { [weak self] in
-      self?.tableView.reloadData()
-    }
+    viewModel.fetchAllMovies()
   }
   
   private func setup() {
     title = tabBarItem.title
-
-    
-    categorieTitles = ["What's popular", "Free to Watch", "Trending"]
     
     tableView = UITableView()
-    tableView.register(MovieCategoriesTableViewCell.self, forCellReuseIdentifier: MovieCategoriesTableViewCell.identifier)
     tableView.dataSource = self
     tableView.delegate = self
   }
@@ -79,45 +74,93 @@ class MovieCategoriesViewController: UIViewController {
     tableView.autoPinEdge(toSuperviewEdge: .bottom)
   }
   
+  private func bindData() {
+    viewModel
+      .$allMoviesPublished
+      .receive(on: DispatchQueue.main)
+      .sink { movies in
+        if movies.isEmpty { return }
+        self.populateModel(from: movies)
+        self.registerCells()
+        self.tableView.reloadData()
+      }
+      .store(in: &disposables)
+  }
+  
+  // TODO: u helper
+  private func convertToTitle(_ category: MovieCategory) -> String {
+    switch category {
+    case .freeToWatch:
+      return "Free To Watch"
+    case .popular:
+      return "What's Popular"
+    case .trending:
+      return "Trending"
+    }
+  }
+  
+  private func populateModel(from movieCategoriesModel: [MovieCategoriesModel]) {
+    let categoryTitles: [MovieCategory] = [.popular, .freeToWatch, .trending]
+    categoryTitles.forEach { category in
+      
+      model.append(CategoryTableViewCellModel(title: convertToTitle(category)))
+      
+      var movieTags: Set<MovieTag> = .init()
+      movieCategoriesModel
+        .filter { category == $0.category }
+        .forEach { movieTags.insert($0.movieTag) }
+      let tagsSorted = Array(movieTags).sorted(by: { $0.rawValue < $1.rawValue })
+      model.append(MovieTagTableViewCellModel(category: category, movieTags: tagsSorted, didTap: { movieTag in
+        self.tableView.reloadData()
+        
+      }))
+      
+        if Preferences.selectedCategoryIndex == nil || Preferences.selectedCategory == nil {
+          Preferences.selectedCategoryIndex = [category.rawValue: 0]
+          Preferences.selectedCategory = [category.rawValue: tagsSorted.first!.rawValue]
+        } else {
+          Preferences.selectedCategoryIndex?[category.rawValue] = 0
+          Preferences.selectedCategory?[category.rawValue] = tagsSorted.first!.rawValue
+        }
+      
+      let movies = movieCategoriesModel
+        .filter { category == $0.category }
+        .compactMap {
+          MovieCategoriesModel(id: $0.id, imageURL: $0.imageURL, category: $0.category, movieTag: $0.movieTag)
+        }
+      model.append(MovieTableViewCellModel(movies: movies, selectedMovieTag: tagsSorted.first!, didTap: { movieId in
+        self.router.showMovieDetails(with: movieId)
+      }))
+      
+      model.append(SpacerTableViewCellModel())
+    }
+  }
+  
+  private func registerCells() {
+    model.forEach { tableView.register($0.cellType, forCellReuseIdentifier: $0.identifier) }
+  }
+  
 }
 
 extension MovieCategoriesViewController: UITableViewDataSource {
+ 
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return 1
-  }
-  
-  func numberOfSections(in tableView: UITableView) -> Int {
-    if let categories {
-      return categories.count
-    } else {
-      return 0
-    }
+    model.count
   }
   
   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    guard let cell = tableView.dequeueReusableCell(withIdentifier: MovieCategoriesTableViewCell.identifier, for: indexPath) as? MovieCategoriesTableViewCell else { return UITableViewCell() }
-    
-    let categoryURL = categories[indexPath.section].map { URL(string: $0.imageUrl) } // compactMap
-    let ids = categories[indexPath.section].map { $0.id }
-    let title = categorieTitles[indexPath.section]
-    cell.configure(with: categoryURL, categoryTitle: title, ids: ids)
-    cell.didTap = { [weak self] (id: Int) in
-      self?.router.showMovieDetails(with: id)
+    let currentModel = model[indexPath.row]
+    let cell = tableView.dequeueReusableCell(withIdentifier: currentModel.identifier, for: indexPath)
+
+    if let configure = cell as? Configurable {
+      configure.configure(with: currentModel)
     }
-      
+    
     return cell
   }
 }
 
 
 extension MovieCategoriesViewController: UITableViewDelegate {
-  
-  func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
-    UIView()
-  }
-
-  func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-    section == (categorieTitles.count - 1) ? 0 : Constants.sectionSpacing
-  }
 
 }

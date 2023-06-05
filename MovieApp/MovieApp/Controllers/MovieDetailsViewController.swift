@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import MovieAppData
+import Combine
 
 class MovieDetailsViewController: UIViewController {
   
@@ -19,17 +19,20 @@ class MovieDetailsViewController: UIViewController {
     static let leftPadding: CGFloat = 20
     static let rightPadding: CGFloat = 20
   }
-  
+    
   private let id: Int
   private var model: MovieDetailsModel?
+  private var viewModel: MovieDetailsViewModel
+  private var disposables = Set<AnyCancellable>()
   
   private let movieHeaderView = MovieHeaderView()
   private let overview = UILabel()
   private let summary = UILabel()
   private let collectioView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
   
-  init(id: Int) {
+  init(id: Int, viewModel: MovieDetailsViewModel) {
     self.id = id
+    self.viewModel = viewModel
     super.init(nibName: nil, bundle: nil)
   }
   
@@ -39,9 +42,11 @@ class MovieDetailsViewController: UIViewController {
     super.viewDidLoad()
     
     setupViews()
+    fetchData()
     addViews()
     styleViews()
     setupConstraints()
+    bindData()
   }
   
   override func viewWillAppear(_ animated: Bool) {
@@ -49,18 +54,14 @@ class MovieDetailsViewController: UIViewController {
     moveTextAway()
   }
   
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-    moveTextToOriginalPosition()
-  }
-  
   private func setupViews() {
-    model = MovieUseCase().getDetails(id: self.id)
-    collectioView.reloadData()
-    
     collectioView.register(ActorCollectionViewCell.self, forCellWithReuseIdentifier: ActorCollectionViewCell.identifier)
     collectioView.dataSource = self
     collectioView.delegate = self
+  }
+  
+  private func fetchData() {
+    viewModel.fetchMovieDetails(with: id)
   }
   
   private func addViews() {
@@ -78,18 +79,6 @@ class MovieDetailsViewController: UIViewController {
   private func styleViews() {
     view.backgroundColor = Constants.bacgroundColor
     
-    guard let model else { return }
-    let movieHeaderViewModel =
-    MovieHeaderViewModel(
-      rating: model.rating,
-      name: model.name,
-      year: model.year,
-      releaseDate: model.releaseDate,
-      categories: model.categories,
-      duration: model.duration,
-      imageUrl: URL(string: model.imageUrl))
-    movieHeaderView.update(with: movieHeaderViewModel)
-    
     overview.textColor = Constants.textColor
     overview.font = .systemFont(ofSize: 20, weight: .bold)
     overview.text = "Overview"
@@ -98,7 +87,6 @@ class MovieDetailsViewController: UIViewController {
     summary.font = .systemFont(ofSize: 14)
     summary.lineBreakMode = .byWordWrapping
     summary.numberOfLines = 0
-    summary.text = model.summary
     
     collectioView.backgroundColor = Constants.bacgroundColor
   }
@@ -119,6 +107,48 @@ class MovieDetailsViewController: UIViewController {
     collectioView.autoPinEdge(toSuperviewEdge: .leading, withInset: Constants.leftPadding)
     collectioView.autoPinEdge(toSuperviewEdge: .trailing, withInset: Constants.rightPadding)
     collectioView.autoPinEdge(toSuperviewEdge: .bottom)
+  }
+  
+  private func bindData() {
+    viewModel
+      .$details
+      .receive(on: DispatchQueue.main)
+      .sink { details in
+        self.model = details
+        self.updateData()
+      }
+      .store(in: &disposables)
+  }
+  
+  private func updateData() {
+    
+    var image: UIImage?
+    if let favoriteIds = Preferences.favoriteMoviesIds {
+      if favoriteIds.contains(id) {
+        image = .heartFill
+      } else {
+        image = .heart
+      }
+    }
+    guard let image else { return }
+    guard let model = self.model else { return }
+    let movieHeaderViewModel =
+    MovieHeaderViewModel(
+      rating: model.rating,
+      name: model.name,
+      year: model.year,
+      releaseDate: model.releaseDate,
+      categories: model.categories,
+      duration: model.duration,
+      imageUrl: URL(string: model.imageUrl),
+      image: image,
+      id: model.id) { movieId in
+        self.updateData()
+      }
+    movieHeaderView.update(with: movieHeaderViewModel)
+    summary.text = model.summary
+    moveTextToOriginalPosition()
+    collectioView.reloadData()
   }
   
   private func moveTextAway() {

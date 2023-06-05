@@ -16,8 +16,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     guard let windowScene = (scene as? UIWindowScene) else { return }
     window = UIWindow(windowScene: windowScene)
     
-    let navigationController = UINavigationController()
-    let router = Router(navigationController: navigationController)
+    let router = Router()
     router.start(in: window)
   }
 

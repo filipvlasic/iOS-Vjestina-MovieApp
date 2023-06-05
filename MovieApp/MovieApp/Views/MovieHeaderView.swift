@@ -6,16 +6,18 @@
 //
 
 import UIKit
-import MovieAppData
 
 struct MovieHeaderViewModel {
   let rating: Double
   let name: String
   let year: Int
   let releaseDate: String
-  let categories: [MovieCategoryModel]
+  let categories: [String]
   let duration: Int
   let imageUrl: URL?
+  let image: UIImage
+  let id: Int
+  let didTapHeart: (Int) -> Void
 }
 
 class MovieHeaderView: BaseView {
@@ -25,6 +27,9 @@ class MovieHeaderView: BaseView {
     static let leftPadding: CGFloat = 20
   }
   
+  private var movieId = 0
+  private var didTapHeart: ((Int) -> Void)?
+  
   private let headerImageView = UIImageView()
   private let rating = UILabel()
   private let userScore = UILabel()
@@ -32,6 +37,11 @@ class MovieHeaderView: BaseView {
   private let releaseData = UILabel()
   private let categories = UILabel()
   private let starsButton = UIButton()
+  
+  override init() {
+    super.init()
+    setupActions()
+  }
   
   override func addViews() {
     addSubview(headerImageView)
@@ -67,7 +77,6 @@ class MovieHeaderView: BaseView {
     categories.lineBreakMode = .byWordWrapping
     categories.numberOfLines = 0
     
-    starsButton.setImage(UIImage(systemName: "star"), for: .normal)
     starsButton.layer.cornerRadius = 16
     starsButton.backgroundColor = .gray
     starsButton.tintColor = Constants.textColor
@@ -96,6 +105,26 @@ class MovieHeaderView: BaseView {
     starsButton.autoPinEdge(toSuperviewSafeArea: .leading, withInset: Constants.leftPadding)
     starsButton.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 20)
     starsButton.autoSetDimensions(to: CGSize(width: 32, height: 32))
+  }
+  
+  private func setupActions() {
+    starsButton.addTarget(self, action: #selector(tap), for: .touchUpInside)
+  }
+  
+  @objc
+  private func tap() {
+    guard let favoriteMovies = Preferences.favoriteMoviesIds else { return }
+    var movieIds = Preferences.favoriteMoviesIds!
+    if favoriteMovies.contains(movieId) {
+      movieIds.removeAll { id in
+        id == movieId
+      }
+      Preferences.favoriteMoviesIds = movieIds
+    } else {
+      movieIds.append(movieId)
+      Preferences.favoriteMoviesIds = movieIds
+    }
+    didTapHeart?(movieId)
   }
   
   func moveTextAway(position: CGFloat) {
@@ -148,9 +177,12 @@ extension MovieHeaderView {
     title.text = "\(model.name) (\(model.year))"
     releaseData.text = "\(model.releaseDate) (US)"
     categories.attributedText = convertCategories(model.categories, duration: model.duration)
+    starsButton.setImage(model.image, for: .normal)
+    movieId = model.id
+    self.didTapHeart = model.didTapHeart
   }
   
-  private func convertCategories(_ categories: [MovieCategoryModel], duration: Int) -> NSAttributedString {
+  private func convertCategories(_ categories: [String], duration: Int) -> NSAttributedString {
     let normalText = categories.map { "\($0)".capitalized }.joined(separator: ", ")
     let boldText = convertMinutesToHours(duration)
     

@@ -12,6 +12,6 @@ extension UIImage {
   static let tabMovieListImage = UIImage(systemName: "house")
   static let tabMovieListSelectedImage = UIImage(systemName: "house.fill")
   
-  static let tabFavoritesImage = UIImage(systemName: "heart")
-  static let tabFavoritesSelectedImage = UIImage(systemName: "heart.fill")
+  static let heart = UIImage(systemName: "heart")!
+  static let heartFill = UIImage(systemName: "heart.fill")!
 }

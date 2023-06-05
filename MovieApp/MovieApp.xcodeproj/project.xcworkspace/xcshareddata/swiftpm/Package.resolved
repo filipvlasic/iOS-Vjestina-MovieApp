@@ -10,15 +10,6 @@
       }
     },
     {
-      "identity" : "movieappdata",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/fiveagency/MovieAppData",
-      "state" : {
-        "revision" : "0d476dbdc4e8f6828a4fdaff4fa0b977ab5ebf35",
-        "version" : "2.1.1"
-      }
-    },
-    {
       "identity" : "purelayout",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/PureLayout/PureLayout",
