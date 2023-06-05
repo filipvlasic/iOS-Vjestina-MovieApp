@@ -115,10 +115,13 @@ class MovieCategoriesViewController: UIViewController {
         
       }))
       
-//      Preferences.selectedCategoryIndex = [category.rawValue: 0]
-      Preferences.selectedCategoryIndex?[category.rawValue] = 0
-//      Preferences.selectedCategory = [category.rawValue: tagsSorted.first!.rawValue]
-      Preferences.selectedCategory?[category.rawValue] = tagsSorted.first!.rawValue
+        if Preferences.selectedCategoryIndex == nil || Preferences.selectedCategory == nil {
+          Preferences.selectedCategoryIndex = [category.rawValue: 0]
+          Preferences.selectedCategory = [category.rawValue: tagsSorted.first!.rawValue]
+        } else {
+          Preferences.selectedCategoryIndex?[category.rawValue] = 0
+          Preferences.selectedCategory?[category.rawValue] = tagsSorted.first!.rawValue
+        }
       
       let movies = movieCategoriesModel
         .filter { category == $0.category }
